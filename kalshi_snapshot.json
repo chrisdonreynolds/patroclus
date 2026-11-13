@@ -1,10 +1,10 @@
 {
-  "scanner_name": "Patroclus Kalshi Longshot-Bias Underwriting Scanner v3.0",
-  "generated_at_utc": "2026-11-13T18:22:41.205360+00:00",
+  "scanner_name": "Patroclus Kalshi Longshot-Bias Underwriting Scanner v3.1",
+  "generated_at_utc": "2026-11-13T18:46:37.742721+00:00",
   "repository_url": "https://github.com/chrisdonreynolds/patroclus",
   "raw_json_url": "https://raw.githubusercontent.com/chrisdonreynolds/patroclus/main/kalshi_snapshot.json",
   "raw_md_url": "https://raw.githubusercontent.com/chrisdonreynolds/patroclus/main/kalshi_snapshot.md",
-  "user_agent": "PatroclusKalshiScanner/3.0 (christopherdonreynolds@gmail.com)",
+  "user_agent": "PatroclusKalshiScanner/3.1 (christopherdonreynolds@gmail.com)",
   "execution_mode": "CHOICE_1_MANUAL_APP_EXECUTION_ONLY",
   "bankroll_and_kelly_sizing": {
     "source": "LIVE_KALSHI_PORTFOLIO_API (Live=$1016.18; SizingFloor=$200.00)",
@@ -22,21 +22,41 @@
     "endpoint_queried": "https://external-api.kalshi.com/trade-api/v2/portfolio/balance"
   },
   "harvest_statistics": {
-    "pages_fetched": 49,
-    "events_scanned": 4000,
-    "total_open_markets_scanned": 9846
+    "pages_fetched": 63,
+    "events_scanned": 2400,
+    "total_open_markets_scanned": 9476
   },
   "diagnostics_funnel": {
-    "markets_scanned": 9846,
-    "in_8h_168h_window": 202,
-    "passed_prelim_quote_gate": 36,
-    "orderbooks_non_empty": 36,
-    "passed_spread_and_depth_gate": 9,
-    "passed_oracle_tail_gate": 3,
+    "markets_scanned": 9476,
+    "in_8h_168h_window": 2759,
+    "passed_prelim_quote_gate": 246,
+    "orderbooks_non_empty": 246,
+    "passed_spread_and_depth_gate": 106,
+    "passed_oracle_tail_gate": 97,
+    "per_bucket_stages": {
+      "BUCKET_A_WEATHER_ATMOSPHERIC": {
+        "in_window": 109,
+        "prelim_quote": 29,
+        "spread_and_depth": 11,
+        "oracle_tail": 2
+      },
+      "BUCKET_B_MACRO_ENERGY_COMMODITY": {
+        "in_window": 195,
+        "prelim_quote": 36,
+        "spread_and_depth": 14,
+        "oracle_tail": 14
+      },
+      "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE": {
+        "in_window": 2455,
+        "prelim_quote": 181,
+        "spread_and_depth": 81,
+        "oracle_tail": 81
+      }
+    },
     "candidates_by_bucket": {
-      "BUCKET_A_WEATHER_ATMOSPHERIC": 0,
-      "BUCKET_B_MACRO_ENERGY_COMMODITY": 3,
-      "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE": 0
+      "BUCKET_A_WEATHER_ATMOSPHERIC": 2,
+      "BUCKET_B_MACRO_ENERGY_COMMODITY": 14,
+      "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE": 81
     }
   },
   "primary_truth_feeds": {
@@ -76,7 +96,7 @@
       "federal_register_recent_docs": 5
     },
     "vertical_6_weather": {
-      "vertical": "Daily High/Low Weather Station Grids (NWS + METAR)",
+      "vertical": "Daily High/Low Weather Station Grids (NWS + METAR, 16 Cities)",
       "source_urls": [
         "https://api.weather.gov"
       ],
@@ -107,8 +127,8 @@
           "observed_today_max_f": 48.0,
           "midnight_00_02_temp_f": 48.0,
           "midnight_clocks_trap_triggered": true,
-          "latest_observed_temp_c": null,
-          "latest_observed_temp_f": null,
+          "latest_observed_temp_c": 5.0,
+          "latest_observed_temp_f": 41.0,
           "metar_celsius_rounding_warning": true
         },
         "KMDW": {
@@ -137,8 +157,8 @@
           "observed_today_max_f": 43.0,
           "midnight_00_02_temp_f": null,
           "midnight_clocks_trap_triggered": false,
-          "latest_observed_temp_c": 5.0,
-          "latest_observed_temp_f": 41.0,
+          "latest_observed_temp_c": 6.0,
+          "latest_observed_temp_f": 42.8,
           "metar_celsius_rounding_warning": true
         },
         "KHOU": {
@@ -214,7 +234,7 @@
             "2026-11-14": 70.0,
             "2026-11-15": 71.0,
             "2026-11-16": 68.0,
-            "2026-11-17": 58.0
+            "2026-11-17": 61.0
           },
           "daily_forecast_lows_f": {
             "2026-11-13": 65.0,
@@ -224,11 +244,11 @@
             "2026-11-17": 54.0
           },
           "hourly_forecast_peak_f": 70.0,
-          "observed_today_max_f": 63.0,
+          "observed_today_max_f": 64.4,
           "midnight_00_02_temp_f": null,
           "midnight_clocks_trap_triggered": false,
-          "latest_observed_temp_c": 17.0,
-          "latest_observed_temp_f": 62.6,
+          "latest_observed_temp_c": 18.0,
+          "latest_observed_temp_f": 64.4,
           "metar_celsius_rounding_warning": true
         },
         "KMIA": {
@@ -242,14 +262,14 @@
           "daily_forecast_highs_f": {
             "2026-11-13": 80.0,
             "2026-11-14": 72.0,
-            "2026-11-15": 78.0,
+            "2026-11-15": 79.0,
             "2026-11-16": 79.0,
             "2026-11-17": 78.0
           },
           "daily_forecast_lows_f": {
-            "2026-11-13": 67.0,
+            "2026-11-13": 68.0,
             "2026-11-14": 60.0,
-            "2026-11-15": 60.0,
+            "2026-11-15": 59.0,
             "2026-11-16": 70.0,
             "2026-11-17": 73.0
           },
@@ -300,25 +320,265 @@
           "observations_url": "https://api.weather.gov/stations/KPHL/observations?limit=30",
           "forecast_hourly_url": "https://api.weather.gov/gridpoints/PHI/48,75/forecast/hourly",
           "daily_forecast_highs_f": {
-            "2026-11-13": 42.0,
+            "2026-11-13": 43.0,
             "2026-11-14": 48.0,
             "2026-11-15": 51.0,
-            "2026-11-16": 52.0,
-            "2026-11-17": 49.0
+            "2026-11-16": 53.0,
+            "2026-11-17": 54.0
           },
           "daily_forecast_lows_f": {
-            "2026-11-13": 40.0,
-            "2026-11-14": 37.0,
+            "2026-11-13": 39.0,
+            "2026-11-14": 35.0,
             "2026-11-15": 37.0,
-            "2026-11-16": 35.0,
+            "2026-11-16": 34.0,
             "2026-11-17": 33.0
           },
-          "hourly_forecast_peak_f": 42.0,
+          "hourly_forecast_peak_f": 43.0,
           "observed_today_max_f": 42.8,
           "midnight_00_02_temp_f": null,
           "midnight_clocks_trap_triggered": false,
           "latest_observed_temp_c": 6.0,
           "latest_observed_temp_f": 42.8,
+          "metar_celsius_rounding_warning": true
+        },
+        "KSFO": {
+          "station_id": "KSFO",
+          "city": "San Francisco International",
+          "timezone": "America/Los_Angeles",
+          "today_local_date": "2026-11-13",
+          "points_url": "https://api.weather.gov/points/37.6196,-122.3656",
+          "observations_url": "https://api.weather.gov/stations/KSFO/observations?limit=30",
+          "forecast_hourly_url": "https://api.weather.gov/gridpoints/MTR/85,98/forecast/hourly",
+          "daily_forecast_highs_f": {
+            "2026-11-13": 61.0,
+            "2026-11-14": 64.0,
+            "2026-11-15": 62.0,
+            "2026-11-16": 60.0,
+            "2026-11-17": 54.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 55.0,
+            "2026-11-14": 53.0,
+            "2026-11-15": 54.0,
+            "2026-11-16": 52.0,
+            "2026-11-17": 51.0
+          },
+          "hourly_forecast_peak_f": 61.0,
+          "observed_today_max_f": 61.0,
+          "midnight_00_02_temp_f": null,
+          "midnight_clocks_trap_triggered": false,
+          "latest_observed_temp_c": 15.0,
+          "latest_observed_temp_f": 59.0,
+          "metar_celsius_rounding_warning": true
+        },
+        "KDFW": {
+          "station_id": "KDFW",
+          "city": "Dallas Fort Worth",
+          "timezone": "America/Chicago",
+          "today_local_date": "2026-11-13",
+          "points_url": "https://api.weather.gov/points/32.8998,-97.0403",
+          "observations_url": "https://api.weather.gov/stations/KDFW/observations?limit=30",
+          "forecast_hourly_url": "https://api.weather.gov/gridpoints/FWD/80,109/forecast/hourly",
+          "daily_forecast_highs_f": {
+            "2026-11-13": 68.0,
+            "2026-11-14": 64.0,
+            "2026-11-15": 53.0,
+            "2026-11-16": 53.0,
+            "2026-11-17": 56.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 53.0,
+            "2026-11-14": 47.0,
+            "2026-11-15": 47.0,
+            "2026-11-16": 46.0,
+            "2026-11-17": 48.0
+          },
+          "hourly_forecast_peak_f": 68.0,
+          "observed_today_max_f": 64.4,
+          "midnight_00_02_temp_f": null,
+          "midnight_clocks_trap_triggered": false,
+          "latest_observed_temp_c": 18.0,
+          "latest_observed_temp_f": 64.4,
+          "metar_celsius_rounding_warning": true
+        },
+        "KBOS": {
+          "station_id": "KBOS",
+          "city": "Boston Logan",
+          "timezone": "America/New_York",
+          "today_local_date": "2026-11-13",
+          "points_url": "https://api.weather.gov/points/42.3606,-71.0097",
+          "observations_url": "https://api.weather.gov/stations/KBOS/observations?limit=30",
+          "forecast_hourly_url": "https://api.weather.gov/gridpoints/BOX/73,101/forecast/hourly",
+          "daily_forecast_highs_f": {
+            "2026-11-13": 43.0,
+            "2026-11-14": 46.0,
+            "2026-11-15": 48.0,
+            "2026-11-16": 49.0,
+            "2026-11-17": 51.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 39.0,
+            "2026-11-14": 36.0,
+            "2026-11-15": 37.0,
+            "2026-11-16": 37.0,
+            "2026-11-17": 37.0
+          },
+          "hourly_forecast_peak_f": 43.0,
+          "observed_today_max_f": 42.8,
+          "midnight_00_02_temp_f": null,
+          "midnight_clocks_trap_triggered": false,
+          "latest_observed_temp_c": 6.0,
+          "latest_observed_temp_f": 42.8,
+          "metar_celsius_rounding_warning": true
+        },
+        "KATL": {
+          "station_id": "KATL",
+          "city": "Atlanta Hartsfield-Jackson",
+          "timezone": "America/New_York",
+          "today_local_date": "2026-11-13",
+          "points_url": "https://api.weather.gov/points/33.6407,-84.4277",
+          "observations_url": "https://api.weather.gov/stations/KATL/observations?limit=30",
+          "forecast_hourly_url": "https://api.weather.gov/gridpoints/FFC/50,82/forecast/hourly",
+          "daily_forecast_highs_f": {
+            "2026-11-13": 54.0,
+            "2026-11-14": 54.0,
+            "2026-11-15": 57.0,
+            "2026-11-16": 56.0,
+            "2026-11-17": 53.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 42.0,
+            "2026-11-14": 37.0,
+            "2026-11-15": 32.0,
+            "2026-11-16": 37.0,
+            "2026-11-17": 40.0
+          },
+          "hourly_forecast_peak_f": 54.0,
+          "observed_today_max_f": 51.8,
+          "midnight_00_02_temp_f": null,
+          "midnight_clocks_trap_triggered": false,
+          "latest_observed_temp_c": 9.0,
+          "latest_observed_temp_f": 48.2,
+          "metar_celsius_rounding_warning": true
+        },
+        "KDCA": {
+          "station_id": "KDCA",
+          "city": "Washington Reagan National",
+          "timezone": "America/New_York",
+          "today_local_date": "2026-11-13",
+          "points_url": "https://api.weather.gov/points/38.8512,-77.0402",
+          "observations_url": "https://api.weather.gov/stations/KDCA/observations?limit=30",
+          "forecast_hourly_url": "https://api.weather.gov/gridpoints/LWX/97,69/forecast/hourly",
+          "daily_forecast_highs_f": {
+            "2026-11-13": 50.0,
+            "2026-11-14": 51.0,
+            "2026-11-15": 55.0,
+            "2026-11-16": 56.0,
+            "2026-11-17": 56.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 41.0,
+            "2026-11-14": 37.0,
+            "2026-11-15": 41.0,
+            "2026-11-16": 37.0,
+            "2026-11-17": 36.0
+          },
+          "hourly_forecast_peak_f": 50.0,
+          "observed_today_max_f": 51.8,
+          "midnight_00_02_temp_f": null,
+          "midnight_clocks_trap_triggered": false,
+          "latest_observed_temp_c": 11.0,
+          "latest_observed_temp_f": 51.8,
+          "metar_celsius_rounding_warning": true
+        },
+        "KSEA": {
+          "station_id": "KSEA",
+          "city": "Seattle-Tacoma",
+          "timezone": "America/Los_Angeles",
+          "today_local_date": "2026-11-13",
+          "points_url": "https://api.weather.gov/points/47.4502,-122.3088",
+          "observations_url": "https://api.weather.gov/stations/KSEA/observations?limit=30",
+          "forecast_hourly_url": "https://api.weather.gov/gridpoints/SEW/124,61/forecast/hourly",
+          "daily_forecast_highs_f": {
+            "2026-11-13": 57.0,
+            "2026-11-14": 57.0,
+            "2026-11-15": 52.0,
+            "2026-11-16": 50.0,
+            "2026-11-17": 44.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 51.0,
+            "2026-11-14": 49.0,
+            "2026-11-15": 47.0,
+            "2026-11-16": 44.0,
+            "2026-11-17": 42.0
+          },
+          "hourly_forecast_peak_f": 57.0,
+          "observed_today_max_f": 59.0,
+          "midnight_00_02_temp_f": null,
+          "midnight_clocks_trap_triggered": false,
+          "latest_observed_temp_c": 12.0,
+          "latest_observed_temp_f": 53.6,
+          "metar_celsius_rounding_warning": true
+        },
+        "KPHX": {
+          "station_id": "KPHX",
+          "city": "Phoenix Sky Harbor",
+          "timezone": "America/Phoenix",
+          "today_local_date": "2026-11-13",
+          "points_url": "https://api.weather.gov/points/33.4373,-112.0078",
+          "observations_url": "https://api.weather.gov/stations/KPHX/observations?limit=30",
+          "forecast_hourly_url": "https://api.weather.gov/gridpoints/PSR/161,57/forecast/hourly",
+          "daily_forecast_highs_f": {
+            "2026-11-13": 76.0,
+            "2026-11-14": 72.0,
+            "2026-11-15": 75.0,
+            "2026-11-16": 79.0,
+            "2026-11-17": 66.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 63.0,
+            "2026-11-14": 59.0,
+            "2026-11-15": 55.0,
+            "2026-11-16": 56.0,
+            "2026-11-17": 60.0
+          },
+          "hourly_forecast_peak_f": 76.0,
+          "observed_today_max_f": 71.6,
+          "midnight_00_02_temp_f": null,
+          "midnight_clocks_trap_triggered": false,
+          "latest_observed_temp_c": 22.0,
+          "latest_observed_temp_f": 71.6,
+          "metar_celsius_rounding_warning": true
+        },
+        "KLAS": {
+          "station_id": "KLAS",
+          "city": "Las Vegas Reid",
+          "timezone": "America/Los_Angeles",
+          "today_local_date": "2026-11-13",
+          "points_url": "https://api.weather.gov/points/36.084,-115.1537",
+          "observations_url": "https://api.weather.gov/stations/KLAS/observations?limit=30",
+          "forecast_hourly_url": "https://api.weather.gov/gridpoints/VEF/122,94/forecast/hourly",
+          "daily_forecast_highs_f": {
+            "2026-11-13": 72.0,
+            "2026-11-14": 69.0,
+            "2026-11-15": 67.0,
+            "2026-11-16": 66.0,
+            "2026-11-17": 56.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 61.0,
+            "2026-11-14": 54.0,
+            "2026-11-15": 50.0,
+            "2026-11-16": 51.0,
+            "2026-11-17": 51.0
+          },
+          "hourly_forecast_peak_f": 72.0,
+          "observed_today_max_f": 66.2,
+          "midnight_00_02_temp_f": null,
+          "midnight_clocks_trap_triggered": false,
+          "latest_observed_temp_c": 19.0,
+          "latest_observed_temp_f": 66.2,
           "metar_celsius_rounding_warning": true
         }
       }
@@ -335,103 +595,493 @@
     }
   },
   "selected_3_orthogonal_picks": {
-    "BUCKET_A_WEATHER_ATMOSPHERIC": null,
-    "BUCKET_B_MACRO_ENERGY_COMMODITY": {
-      "ticker": "KXWTI-26NOV1614-T90.99",
-      "event_ticker": "KXWTI-26NOV1614",
-      "series_ticker": "KXWTI",
-      "title": "Will the WTI crude oil settlement price be above 90.99 USD/Bbl on Nov 16, 2026?",
-      "subtitle": "Above $90.99",
+    "BUCKET_A_WEATHER_ATMOSPHERIC": {
+      "ticker": "KXHIGHDEN-26NOV13-B60.5",
+      "event_ticker": "KXHIGHDEN-26NOV13",
+      "series_ticker": "KXHIGHDEN",
+      "title": "Will the maximum temperature be 60-61\u00b0 on Nov 13, 2026?",
+      "subtitle": "60\u00b0 to 61\u00b0",
       "category": "",
-      "kalshi_market_url": "https://kalshi.com/markets/kxwti-26nov1614",
-      "orthogonality_bucket": "BUCKET_B_MACRO_ENERGY_COMMODITY",
-      "hours_to_expiration": 73.12,
-      "expiration_iso": "2026-11-16T19:30:00Z",
-      "quality_score": 24.33,
-      "oracle_edge_proof": "Tail longshot bid at 13c Yes (event consensus peak 97c Yes across 30 market(s)); verified two-sided book.",
+      "kalshi_market_url": "https://kalshi.com/markets/kxhighden-26nov13",
+      "orthogonality_bucket": "BUCKET_A_WEATHER_ATMOSPHERIC",
+      "hours_to_expiration": 25.22,
+      "expiration_iso": "2026-11-14T20:00:00Z",
+      "quality_score": 19.604,
+      "oracle_edge_proof": "NWS KDEN forecast high (2026-11-13) is 64.0F; bracket 60.0F-61.0F sits -3.0F below forecast.",
       "orderbook_pricing": {
-        "best_yes_bid_cents": 13,
-        "best_no_bid_cents": 83,
-        "implied_yes_ask_cents": 17,
-        "last_price_yes_cents": 0,
-        "recommended_maker_no_bid_cents": 84,
+        "best_yes_bid_cents": 3,
+        "best_no_bid_cents": 95,
+        "implied_yes_ask_cents": 5,
+        "last_price_yes_cents": 4,
+        "recommended_maker_no_bid_cents": 96,
         "price_improvement_cents": 1
       },
       "microstructure_metrics": {
-        "spread_cents": 4,
-        "top_no_queue_depth": 1500,
-        "total_no_bid_qty": 23153,
-        "total_yes_bid_qty": 2088,
-        "total_book_depth_contracts": 25241,
-        "volume_24h_contracts": 0.0,
-        "open_interest_contracts": 0.0,
-        "obi": 0.8346,
+        "spread_cents": 2,
+        "top_no_queue_depth": 80,
+        "total_no_bid_qty": 4552,
+        "total_yes_bid_qty": 309,
+        "total_book_depth_contracts": 4861,
+        "volume_24h_contracts": 1226.0,
+        "open_interest_contracts": 1220.4,
+        "obi": 0.8729,
         "mutually_exclusive_event": false,
         "event_overround": 1.0,
-        "taker_fee_saved_dollars_per_contract": 0.0094,
-        "taker_fee_saved_cents_per_contract": 0.94,
-        "total_taker_fee_saved_on_position_dollars": 0.56,
+        "taker_fee_saved_dollars_per_contract": 0.0027,
+        "taker_fee_saved_cents_per_contract": 0.27,
+        "total_taker_fee_saved_on_position_dollars": 0.14,
         "high_adverse_selection_risk": false
       },
       "position_sizing_5pct_cap": {
         "total_bankroll_dollars": 1016.18,
         "max_dollar_risk_5pct": 50.81,
-        "uncapped_5pct_contracts": 60,
-        "liquidity_cap_35pct_book_contracts": 8834,
+        "uncapped_5pct_contracts": 52,
+        "liquidity_cap_35pct_book_contracts": 1701,
         "liquidity_cap_applied": false,
-        "contracts_to_bid": 60,
-        "total_order_exposure_dollars": 50.4,
-        "max_profit_if_no_wins_dollars": 9.6,
-        "net_win_return_pct": 19.05,
-        "payoff_asymmetry_losses_to_wipe_wins": "5.25-to-1"
+        "contracts_to_bid": 52,
+        "total_order_exposure_dollars": 49.92,
+        "max_profit_if_no_wins_dollars": 2.08,
+        "net_win_return_pct": 4.17,
+        "payoff_asymmetry_losses_to_wipe_wins": "24.0-to-1"
       },
       "primary_truth_oracle": {
-        "oracle_edge_proof": "Tail longshot bid at 13c Yes (event consensus peak 97c Yes across 30 market(s)); verified two-sided book.",
-        "weather_station": null,
+        "oracle_edge_proof": "NWS KDEN forecast high (2026-11-13) is 64.0F; bracket 60.0F-61.0F sits -3.0F below forecast.",
+        "weather_station": {
+          "station_id": "KDEN",
+          "city": "Denver International",
+          "timezone": "America/Denver",
+          "today_local_date": "2026-11-13",
+          "points_url": "https://api.weather.gov/points/39.8561,-104.6737",
+          "observations_url": "https://api.weather.gov/stations/KDEN/observations?limit=30",
+          "forecast_hourly_url": "https://api.weather.gov/gridpoints/BOU/74,66/forecast/hourly",
+          "daily_forecast_highs_f": {
+            "2026-11-13": 64.0,
+            "2026-11-14": 53.0,
+            "2026-11-15": 55.0,
+            "2026-11-16": 61.0,
+            "2026-11-17": 44.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 44.0,
+            "2026-11-14": 37.0,
+            "2026-11-15": 35.0,
+            "2026-11-16": 35.0,
+            "2026-11-17": 37.0
+          },
+          "hourly_forecast_peak_f": 64.0,
+          "observed_today_max_f": 57.2,
+          "midnight_00_02_temp_f": null,
+          "midnight_clocks_trap_triggered": false,
+          "latest_observed_temp_c": 14.0,
+          "latest_observed_temp_f": 57.2,
+          "metar_celsius_rounding_warning": true
+        },
         "event_field_inflation": {
-          "event_ticker": "KXWTI-26NOV1614",
-          "candidate_count": 30,
+          "event_ticker": "KXHIGHDEN-26NOV13",
+          "candidate_count": 6,
           "mutually_exclusive": false,
           "event_overround": 1.0,
           "field_inflation_flagged": false
         }
       }
     },
-    "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE": null
+    "BUCKET_B_MACRO_ENERGY_COMMODITY": {
+      "ticker": "KXAAAGASCDHI-26NOV14-SD",
+      "event_ticker": "KXAAAGASCDHI-26NOV14",
+      "series_ticker": "KXAAAGASCDHI",
+      "title": "Will gas prices show a small decrease?",
+      "subtitle": "Small decrease",
+      "category": "Economics",
+      "kalshi_market_url": "https://kalshi.com/markets/kxaaagascdhi-26nov14",
+      "orthogonality_bucket": "BUCKET_B_MACRO_ENERGY_COMMODITY",
+      "hours_to_expiration": 20.22,
+      "expiration_iso": "2026-11-14T15:00:00Z",
+      "quality_score": 40.136,
+      "oracle_edge_proof": "Tail longshot bid at 17c Yes (mutually exclusive event modal peak 33c Yes across 5 slices); 3c spread.",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 17,
+        "best_no_bid_cents": 80,
+        "implied_yes_ask_cents": 20,
+        "last_price_yes_cents": 10,
+        "recommended_maker_no_bid_cents": 82,
+        "price_improvement_cents": 2
+      },
+      "microstructure_metrics": {
+        "spread_cents": 3,
+        "top_no_queue_depth": 400,
+        "total_no_bid_qty": 1326,
+        "total_yes_bid_qty": 1094,
+        "total_book_depth_contracts": 2420,
+        "volume_24h_contracts": 123.3,
+        "open_interest_contracts": 98.0,
+        "obi": 0.0959,
+        "mutually_exclusive_event": true,
+        "event_overround": 0.96,
+        "taker_fee_saved_dollars_per_contract": 0.0103,
+        "taker_fee_saved_cents_per_contract": 1.03,
+        "total_taker_fee_saved_on_position_dollars": 0.63,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 847,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.02,
+        "max_profit_if_no_wins_dollars": 10.98,
+        "net_win_return_pct": 21.95,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.56-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Tail longshot bid at 17c Yes (mutually exclusive event modal peak 33c Yes across 5 slices); 3c spread.",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXAAAGASCDHI-26NOV14",
+          "candidate_count": 5,
+          "mutually_exclusive": true,
+          "event_overround": 0.96,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE": {
+      "ticker": "KXUEFANLTOTAL-26NOV16MKDSLO-4",
+      "event_ticker": "KXUEFANLTOTAL-26NOV16MKDSLO",
+      "series_ticker": "",
+      "title": "Will over 3.5 goals be scored?",
+      "subtitle": "Over 3.5 goals scored",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxuefanltotal-26nov16mkdslo",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 76.97,
+      "expiration_iso": "2026-11-16T23:45:00Z",
+      "quality_score": 34.165,
+      "oracle_edge_proof": "Independent longshot bid at 17c Yes (81c No bid, 2c two-sided spread across 6 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 17,
+        "best_no_bid_cents": 81,
+        "implied_yes_ask_cents": 19,
+        "last_price_yes_cents": 18,
+        "recommended_maker_no_bid_cents": 82,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 2,
+        "top_no_queue_depth": 1231,
+        "total_no_bid_qty": 50942,
+        "total_yes_bid_qty": 7569,
+        "total_book_depth_contracts": 58511,
+        "volume_24h_contracts": 94.0,
+        "open_interest_contracts": 94.0,
+        "obi": 0.7413,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0103,
+        "taker_fee_saved_cents_per_contract": 1.03,
+        "total_taker_fee_saved_on_position_dollars": 0.63,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 20478,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.02,
+        "max_profit_if_no_wins_dollars": 10.98,
+        "net_win_return_pct": 21.95,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.56-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 17c Yes (81c No bid, 2c two-sided spread across 6 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXUEFANLTOTAL-26NOV16MKDSLO",
+          "candidate_count": 6,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    }
   },
   "top_25_uncrowded_candidates": [
     {
-      "ticker": "KXWTI-26NOV1614-T90.99",
-      "event_ticker": "KXWTI-26NOV1614",
-      "series_ticker": "KXWTI",
-      "title": "Will the WTI crude oil settlement price be above 90.99 USD/Bbl on Nov 16, 2026?",
-      "subtitle": "Above $90.99",
+      "ticker": "KXHIGHDEN-26NOV13-B60.5",
+      "event_ticker": "KXHIGHDEN-26NOV13",
+      "series_ticker": "KXHIGHDEN",
+      "title": "Will the maximum temperature be 60-61\u00b0 on Nov 13, 2026?",
+      "subtitle": "60\u00b0 to 61\u00b0",
       "category": "",
-      "kalshi_market_url": "https://kalshi.com/markets/kxwti-26nov1614",
-      "orthogonality_bucket": "BUCKET_B_MACRO_ENERGY_COMMODITY",
-      "hours_to_expiration": 73.12,
-      "expiration_iso": "2026-11-16T19:30:00Z",
-      "quality_score": 24.33,
-      "oracle_edge_proof": "Tail longshot bid at 13c Yes (event consensus peak 97c Yes across 30 market(s)); verified two-sided book.",
+      "kalshi_market_url": "https://kalshi.com/markets/kxhighden-26nov13",
+      "orthogonality_bucket": "BUCKET_A_WEATHER_ATMOSPHERIC",
+      "hours_to_expiration": 25.22,
+      "expiration_iso": "2026-11-14T20:00:00Z",
+      "quality_score": 19.604,
+      "oracle_edge_proof": "NWS KDEN forecast high (2026-11-13) is 64.0F; bracket 60.0F-61.0F sits -3.0F below forecast.",
       "orderbook_pricing": {
-        "best_yes_bid_cents": 13,
+        "best_yes_bid_cents": 3,
+        "best_no_bid_cents": 95,
+        "implied_yes_ask_cents": 5,
+        "last_price_yes_cents": 4,
+        "recommended_maker_no_bid_cents": 96,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 2,
+        "top_no_queue_depth": 80,
+        "total_no_bid_qty": 4552,
+        "total_yes_bid_qty": 309,
+        "total_book_depth_contracts": 4861,
+        "volume_24h_contracts": 1226.0,
+        "open_interest_contracts": 1220.4,
+        "obi": 0.8729,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0027,
+        "taker_fee_saved_cents_per_contract": 0.27,
+        "total_taker_fee_saved_on_position_dollars": 0.14,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 52,
+        "liquidity_cap_35pct_book_contracts": 1701,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 52,
+        "total_order_exposure_dollars": 49.92,
+        "max_profit_if_no_wins_dollars": 2.08,
+        "net_win_return_pct": 4.17,
+        "payoff_asymmetry_losses_to_wipe_wins": "24.0-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "NWS KDEN forecast high (2026-11-13) is 64.0F; bracket 60.0F-61.0F sits -3.0F below forecast.",
+        "weather_station": {
+          "station_id": "KDEN",
+          "city": "Denver International",
+          "timezone": "America/Denver",
+          "today_local_date": "2026-11-13",
+          "points_url": "https://api.weather.gov/points/39.8561,-104.6737",
+          "observations_url": "https://api.weather.gov/stations/KDEN/observations?limit=30",
+          "forecast_hourly_url": "https://api.weather.gov/gridpoints/BOU/74,66/forecast/hourly",
+          "daily_forecast_highs_f": {
+            "2026-11-13": 64.0,
+            "2026-11-14": 53.0,
+            "2026-11-15": 55.0,
+            "2026-11-16": 61.0,
+            "2026-11-17": 44.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 44.0,
+            "2026-11-14": 37.0,
+            "2026-11-15": 35.0,
+            "2026-11-16": 35.0,
+            "2026-11-17": 37.0
+          },
+          "hourly_forecast_peak_f": 64.0,
+          "observed_today_max_f": 57.2,
+          "midnight_00_02_temp_f": null,
+          "midnight_clocks_trap_triggered": false,
+          "latest_observed_temp_c": 14.0,
+          "latest_observed_temp_f": 57.2,
+          "metar_celsius_rounding_warning": true
+        },
+        "event_field_inflation": {
+          "event_ticker": "KXHIGHDEN-26NOV13",
+          "candidate_count": 6,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXLOWTCHI-26NOV14-B29.5",
+      "event_ticker": "KXLOWTCHI-26NOV14",
+      "series_ticker": "KXLOWTCHI",
+      "title": "Will the minimum temperature be 29-30\u00b0 on Nov 14, 2026?",
+      "subtitle": "29\u00b0 to 30\u00b0",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxlowtchi-26nov14",
+      "orthogonality_bucket": "BUCKET_A_WEATHER_ATMOSPHERIC",
+      "hours_to_expiration": 49.22,
+      "expiration_iso": "2026-11-15T20:00:00Z",
+      "quality_score": 14.856,
+      "oracle_edge_proof": "NWS KMDW forecast low (2026-11-14) is 34.0F; bracket 29.0F-30.0F sits -4.0F below forecast.",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 7,
+        "best_no_bid_cents": 80,
+        "implied_yes_ask_cents": 20,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 82,
+        "price_improvement_cents": 2
+      },
+      "microstructure_metrics": {
+        "spread_cents": 13,
+        "top_no_queue_depth": 17,
+        "total_no_bid_qty": 2387,
+        "total_yes_bid_qty": 467,
+        "total_book_depth_contracts": 2854,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": 0.6727,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0103,
+        "taker_fee_saved_cents_per_contract": 1.03,
+        "total_taker_fee_saved_on_position_dollars": 0.63,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 998,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.02,
+        "max_profit_if_no_wins_dollars": 10.98,
+        "net_win_return_pct": 21.95,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.56-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "NWS KMDW forecast low (2026-11-14) is 34.0F; bracket 29.0F-30.0F sits -4.0F below forecast.",
+        "weather_station": {
+          "station_id": "KMDW",
+          "city": "Chicago Midway",
+          "timezone": "America/Chicago",
+          "today_local_date": "2026-11-13",
+          "points_url": "https://api.weather.gov/points/41.7868,-87.7522",
+          "observations_url": "https://api.weather.gov/stations/KMDW/observations?limit=30",
+          "forecast_hourly_url": "https://api.weather.gov/gridpoints/LOT/72,69/forecast/hourly",
+          "daily_forecast_highs_f": {
+            "2026-11-13": 42.0,
+            "2026-11-14": 46.0,
+            "2026-11-15": 49.0,
+            "2026-11-16": 51.0,
+            "2026-11-17": 47.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 36.0,
+            "2026-11-14": 34.0,
+            "2026-11-15": 34.0,
+            "2026-11-16": 34.0,
+            "2026-11-17": 33.0
+          },
+          "hourly_forecast_peak_f": 42.0,
+          "observed_today_max_f": 43.0,
+          "midnight_00_02_temp_f": null,
+          "midnight_clocks_trap_triggered": false,
+          "latest_observed_temp_c": 6.0,
+          "latest_observed_temp_f": 42.8,
+          "metar_celsius_rounding_warning": true
+        },
+        "event_field_inflation": {
+          "event_ticker": "KXLOWTCHI-26NOV14",
+          "candidate_count": 6,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXAAAGASCDHI-26NOV14-SD",
+      "event_ticker": "KXAAAGASCDHI-26NOV14",
+      "series_ticker": "KXAAAGASCDHI",
+      "title": "Will gas prices show a small decrease?",
+      "subtitle": "Small decrease",
+      "category": "Economics",
+      "kalshi_market_url": "https://kalshi.com/markets/kxaaagascdhi-26nov14",
+      "orthogonality_bucket": "BUCKET_B_MACRO_ENERGY_COMMODITY",
+      "hours_to_expiration": 20.22,
+      "expiration_iso": "2026-11-14T15:00:00Z",
+      "quality_score": 40.136,
+      "oracle_edge_proof": "Tail longshot bid at 17c Yes (mutually exclusive event modal peak 33c Yes across 5 slices); 3c spread.",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 17,
+        "best_no_bid_cents": 80,
+        "implied_yes_ask_cents": 20,
+        "last_price_yes_cents": 10,
+        "recommended_maker_no_bid_cents": 82,
+        "price_improvement_cents": 2
+      },
+      "microstructure_metrics": {
+        "spread_cents": 3,
+        "top_no_queue_depth": 400,
+        "total_no_bid_qty": 1326,
+        "total_yes_bid_qty": 1094,
+        "total_book_depth_contracts": 2420,
+        "volume_24h_contracts": 123.3,
+        "open_interest_contracts": 98.0,
+        "obi": 0.0959,
+        "mutually_exclusive_event": true,
+        "event_overround": 0.96,
+        "taker_fee_saved_dollars_per_contract": 0.0103,
+        "taker_fee_saved_cents_per_contract": 1.03,
+        "total_taker_fee_saved_on_position_dollars": 0.63,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 847,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.02,
+        "max_profit_if_no_wins_dollars": 10.98,
+        "net_win_return_pct": 21.95,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.56-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Tail longshot bid at 17c Yes (mutually exclusive event modal peak 33c Yes across 5 slices); 3c spread.",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXAAAGASCDHI-26NOV14",
+          "candidate_count": 5,
+          "mutually_exclusive": true,
+          "event_overround": 0.96,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXAAAGASCDDE-26NOV14-MC",
+      "event_ticker": "KXAAAGASCDDE-26NOV14",
+      "series_ticker": "KXAAAGASCDDE",
+      "title": "Will gas prices show a minimal change?",
+      "subtitle": "Minimal change",
+      "category": "Economics",
+      "kalshi_market_url": "https://kalshi.com/markets/kxaaagascdde-26nov14",
+      "orthogonality_bucket": "BUCKET_B_MACRO_ENERGY_COMMODITY",
+      "hours_to_expiration": 20.22,
+      "expiration_iso": "2026-11-14T15:00:00Z",
+      "quality_score": 37.89,
+      "oracle_edge_proof": "Tail longshot bid at 14c Yes (mutually exclusive event modal peak 70c Yes across 5 slices); 3c spread.",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 14,
         "best_no_bid_cents": 83,
         "implied_yes_ask_cents": 17,
-        "last_price_yes_cents": 0,
+        "last_price_yes_cents": 18,
         "recommended_maker_no_bid_cents": 84,
         "price_improvement_cents": 1
       },
       "microstructure_metrics": {
-        "spread_cents": 4,
-        "top_no_queue_depth": 1500,
-        "total_no_bid_qty": 23153,
-        "total_yes_bid_qty": 2088,
-        "total_book_depth_contracts": 25241,
-        "volume_24h_contracts": 0.0,
-        "open_interest_contracts": 0.0,
-        "obi": 0.8346,
-        "mutually_exclusive_event": false,
-        "event_overround": 1.0,
+        "spread_cents": 3,
+        "top_no_queue_depth": 324,
+        "total_no_bid_qty": 3647,
+        "total_yes_bid_qty": 805,
+        "total_book_depth_contracts": 4452,
+        "volume_24h_contracts": 654.0,
+        "open_interest_contracts": 733.0,
+        "obi": 0.6384,
+        "mutually_exclusive_event": true,
+        "event_overround": 1.09,
         "taker_fee_saved_dollars_per_contract": 0.0094,
         "taker_fee_saved_cents_per_contract": 0.94,
         "total_taker_fee_saved_on_position_dollars": 0.56,
@@ -441,7 +1091,7 @@
         "total_bankroll_dollars": 1016.18,
         "max_dollar_risk_5pct": 50.81,
         "uncapped_5pct_contracts": 60,
-        "liquidity_cap_35pct_book_contracts": 8834,
+        "liquidity_cap_35pct_book_contracts": 1558,
         "liquidity_cap_applied": false,
         "contracts_to_bid": 60,
         "total_order_exposure_dollars": 50.4,
@@ -450,7 +1100,68 @@
         "payoff_asymmetry_losses_to_wipe_wins": "5.25-to-1"
       },
       "primary_truth_oracle": {
-        "oracle_edge_proof": "Tail longshot bid at 13c Yes (event consensus peak 97c Yes across 30 market(s)); verified two-sided book.",
+        "oracle_edge_proof": "Tail longshot bid at 14c Yes (mutually exclusive event modal peak 70c Yes across 5 slices); 3c spread.",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXAAAGASCDDE-26NOV14",
+          "candidate_count": 5,
+          "mutually_exclusive": true,
+          "event_overround": 1.09,
+          "field_inflation_flagged": true
+        }
+      }
+    },
+    {
+      "ticker": "KXWTI-26NOV1614-T91.49",
+      "event_ticker": "KXWTI-26NOV1614",
+      "series_ticker": "KXWTI",
+      "title": "Will the WTI crude oil settlement price be above 91.49 USD/Bbl on Nov 16, 2026?",
+      "subtitle": "Above $91.49",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxwti-26nov1614",
+      "orthogonality_bucket": "BUCKET_B_MACRO_ENERGY_COMMODITY",
+      "hours_to_expiration": 72.72,
+      "expiration_iso": "2026-11-16T19:30:00Z",
+      "quality_score": 23.555,
+      "oracle_edge_proof": "Independent longshot bid at 12c Yes (84c No bid, 4c two-sided spread across 30 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 12,
+        "best_no_bid_cents": 84,
+        "implied_yes_ask_cents": 16,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 85,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 4,
+        "top_no_queue_depth": 1500,
+        "total_no_bid_qty": 23281,
+        "total_yes_bid_qty": 1589,
+        "total_book_depth_contracts": 24870,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": 0.8722,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0089,
+        "taker_fee_saved_cents_per_contract": 0.89,
+        "total_taker_fee_saved_on_position_dollars": 0.53,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 59,
+        "liquidity_cap_35pct_book_contracts": 8704,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 59,
+        "total_order_exposure_dollars": 50.15,
+        "max_profit_if_no_wins_dollars": 8.85,
+        "net_win_return_pct": 17.65,
+        "payoff_asymmetry_losses_to_wipe_wins": "5.67-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 12c Yes (84c No bid, 4c two-sided spread across 30 event market(s)).",
         "weather_station": null,
         "event_field_inflation": {
           "event_ticker": "KXWTI-26NOV1614",
@@ -462,56 +1173,239 @@
       }
     },
     {
-      "ticker": "KXWTI-26NOV1614-T92.49",
-      "event_ticker": "KXWTI-26NOV1614",
-      "series_ticker": "KXWTI",
-      "title": "Will the WTI crude oil settlement price be above 92.49 USD/Bbl on Nov 16, 2026?",
-      "subtitle": "Above $92.49",
-      "category": "",
-      "kalshi_market_url": "https://kalshi.com/markets/kxwti-26nov1614",
+      "ticker": "KXGBPUSDEVENT-20NOV260300-T13300",
+      "event_ticker": "KXGBPUSDEVENT-20NOV260300",
+      "series_ticker": "KXGBPUSDEVENT",
+      "title": "Will GBP/USD be above 1.3300 on Nov 20 at 3:00am ET?",
+      "subtitle": "Above 1.3300",
+      "category": "Financials",
+      "kalshi_market_url": "https://kalshi.com/markets/kxgbpusdevent-20nov260300",
       "orthogonality_bucket": "BUCKET_B_MACRO_ENERGY_COMMODITY",
-      "hours_to_expiration": 73.12,
-      "expiration_iso": "2026-11-16T19:30:00Z",
-      "quality_score": 9.93,
-      "oracle_edge_proof": "Tail longshot bid at 4c Yes (event consensus peak 97c Yes across 30 market(s)); verified two-sided book.",
+      "hours_to_expiration": 157.22,
+      "expiration_iso": "2026-11-20T08:00:00Z",
+      "quality_score": 20.882,
+      "oracle_edge_proof": "Independent longshot bid at 13c Yes (80c No bid, 7c two-sided spread across 21 event market(s)).",
       "orderbook_pricing": {
-        "best_yes_bid_cents": 4,
-        "best_no_bid_cents": 92,
-        "implied_yes_ask_cents": 8,
+        "best_yes_bid_cents": 13,
+        "best_no_bid_cents": 80,
+        "implied_yes_ask_cents": 20,
         "last_price_yes_cents": 0,
-        "recommended_maker_no_bid_cents": 93,
-        "price_improvement_cents": 1
+        "recommended_maker_no_bid_cents": 82,
+        "price_improvement_cents": 2
       },
       "microstructure_metrics": {
-        "spread_cents": 4,
-        "top_no_queue_depth": 1500,
-        "total_no_bid_qty": 13060,
-        "total_yes_bid_qty": 1520,
-        "total_book_depth_contracts": 14580,
+        "spread_cents": 7,
+        "top_no_queue_depth": 573,
+        "total_no_bid_qty": 2168,
+        "total_yes_bid_qty": 4159,
+        "total_book_depth_contracts": 6327,
         "volume_24h_contracts": 0.0,
         "open_interest_contracts": 0.0,
-        "obi": 0.7915,
+        "obi": -0.3147,
         "mutually_exclusive_event": false,
         "event_overround": 1.0,
-        "taker_fee_saved_dollars_per_contract": 0.0046,
-        "taker_fee_saved_cents_per_contract": 0.46,
-        "total_taker_fee_saved_on_position_dollars": 0.25,
+        "taker_fee_saved_dollars_per_contract": 0.0103,
+        "taker_fee_saved_cents_per_contract": 1.03,
+        "total_taker_fee_saved_on_position_dollars": 0.63,
         "high_adverse_selection_risk": false
       },
       "position_sizing_5pct_cap": {
         "total_bankroll_dollars": 1016.18,
         "max_dollar_risk_5pct": 50.81,
-        "uncapped_5pct_contracts": 54,
-        "liquidity_cap_35pct_book_contracts": 5103,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 2214,
         "liquidity_cap_applied": false,
-        "contracts_to_bid": 54,
-        "total_order_exposure_dollars": 50.22,
-        "max_profit_if_no_wins_dollars": 3.78,
-        "net_win_return_pct": 7.53,
-        "payoff_asymmetry_losses_to_wipe_wins": "13.29-to-1"
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.02,
+        "max_profit_if_no_wins_dollars": 10.98,
+        "net_win_return_pct": 21.95,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.56-to-1"
       },
       "primary_truth_oracle": {
-        "oracle_edge_proof": "Tail longshot bid at 4c Yes (event consensus peak 97c Yes across 30 market(s)); verified two-sided book.",
+        "oracle_edge_proof": "Independent longshot bid at 13c Yes (80c No bid, 7c two-sided spread across 21 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXGBPUSDEVENT-20NOV260300",
+          "candidate_count": 21,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXAAAGASCDCT-26NOV14-SD",
+      "event_ticker": "KXAAAGASCDCT-26NOV14",
+      "series_ticker": "KXAAAGASCDCT",
+      "title": "Will gas prices show a small decrease?",
+      "subtitle": "Small decrease",
+      "category": "Economics",
+      "kalshi_market_url": "https://kalshi.com/markets/kxaaagascdct-26nov14",
+      "orthogonality_bucket": "BUCKET_B_MACRO_ENERGY_COMMODITY",
+      "hours_to_expiration": 20.22,
+      "expiration_iso": "2026-11-14T15:00:00Z",
+      "quality_score": 18.864,
+      "oracle_edge_proof": "Tail longshot bid at 3c Yes (mutually exclusive event modal peak 94c Yes across 5 slices); 2c spread.",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 3,
+        "best_no_bid_cents": 95,
+        "implied_yes_ask_cents": 5,
+        "last_price_yes_cents": 20,
+        "recommended_maker_no_bid_cents": 96,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 2,
+        "top_no_queue_depth": 718,
+        "total_no_bid_qty": 1819,
+        "total_yes_bid_qty": 562,
+        "total_book_depth_contracts": 2381,
+        "volume_24h_contracts": 646.0,
+        "open_interest_contracts": 630.0,
+        "obi": 0.5279,
+        "mutually_exclusive_event": true,
+        "event_overround": 1.06,
+        "taker_fee_saved_dollars_per_contract": 0.0027,
+        "taker_fee_saved_cents_per_contract": 0.27,
+        "total_taker_fee_saved_on_position_dollars": 0.14,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 52,
+        "liquidity_cap_35pct_book_contracts": 833,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 52,
+        "total_order_exposure_dollars": 49.92,
+        "max_profit_if_no_wins_dollars": 2.08,
+        "net_win_return_pct": 4.17,
+        "payoff_asymmetry_losses_to_wipe_wins": "24.0-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Tail longshot bid at 3c Yes (mutually exclusive event modal peak 94c Yes across 5 slices); 2c spread.",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXAAAGASCDCT-26NOV14",
+          "candidate_count": 5,
+          "mutually_exclusive": true,
+          "event_overround": 1.06,
+          "field_inflation_flagged": true
+        }
+      }
+    },
+    {
+      "ticker": "KXUSDJPYEVENT-19NOV261930-T16100",
+      "event_ticker": "KXUSDJPYEVENT-19NOV261930",
+      "series_ticker": "KXUSDJPYEVENT",
+      "title": "Will USD/JPY be above 161.00 on Nov 19 at 7:30pm ET?",
+      "subtitle": "Above 161.00",
+      "category": "Financials",
+      "kalshi_market_url": "https://kalshi.com/markets/kxusdjpyevent-19nov261930",
+      "orthogonality_bucket": "BUCKET_B_MACRO_ENERGY_COMMODITY",
+      "hours_to_expiration": 149.72,
+      "expiration_iso": "2026-11-20T00:30:00Z",
+      "quality_score": 18.091,
+      "oracle_edge_proof": "Independent longshot bid at 12c Yes (80c No bid, 8c two-sided spread across 21 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 12,
+        "best_no_bid_cents": 80,
+        "implied_yes_ask_cents": 20,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 82,
+        "price_improvement_cents": 2
+      },
+      "microstructure_metrics": {
+        "spread_cents": 8,
+        "top_no_queue_depth": 763,
+        "total_no_bid_qty": 2467,
+        "total_yes_bid_qty": 3472,
+        "total_book_depth_contracts": 5939,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": -0.1692,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0103,
+        "taker_fee_saved_cents_per_contract": 1.03,
+        "total_taker_fee_saved_on_position_dollars": 0.63,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 2078,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.02,
+        "max_profit_if_no_wins_dollars": 10.98,
+        "net_win_return_pct": 21.95,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.56-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 12c Yes (80c No bid, 8c two-sided spread across 21 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXUSDJPYEVENT-19NOV261930",
+          "candidate_count": 21,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXWTI-26NOV1614-T91.99",
+      "event_ticker": "KXWTI-26NOV1614",
+      "series_ticker": "KXWTI",
+      "title": "Will the WTI crude oil settlement price be above 91.99 USD/Bbl on Nov 16, 2026?",
+      "subtitle": "Above $91.99",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxwti-26nov1614",
+      "orthogonality_bucket": "BUCKET_B_MACRO_ENERGY_COMMODITY",
+      "hours_to_expiration": 72.72,
+      "expiration_iso": "2026-11-16T19:30:00Z",
+      "quality_score": 17.155,
+      "oracle_edge_proof": "Independent longshot bid at 8c Yes (88c No bid, 4c two-sided spread across 30 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 8,
+        "best_no_bid_cents": 88,
+        "implied_yes_ask_cents": 12,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 89,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 4,
+        "top_no_queue_depth": 1500,
+        "total_no_bid_qty": 23394,
+        "total_yes_bid_qty": 1648,
+        "total_book_depth_contracts": 25042,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": 0.8684,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0069,
+        "taker_fee_saved_cents_per_contract": 0.69,
+        "total_taker_fee_saved_on_position_dollars": 0.39,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 57,
+        "liquidity_cap_35pct_book_contracts": 8764,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 57,
+        "total_order_exposure_dollars": 50.73,
+        "max_profit_if_no_wins_dollars": 6.27,
+        "net_win_return_pct": 12.36,
+        "payoff_asymmetry_losses_to_wipe_wins": "8.09-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 8c Yes (88c No bid, 4c two-sided spread across 30 event market(s)).",
         "weather_station": null,
         "event_field_inflation": {
           "event_ticker": "KXWTI-26NOV1614",
@@ -519,6 +1413,982 @@
           "mutually_exclusive": false,
           "event_overround": 1.0,
           "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXUSDCADEVENT-20NOV260930-T14350",
+      "event_ticker": "KXUSDCADEVENT-20NOV260930",
+      "series_ticker": "KXUSDCADEVENT",
+      "title": "Will USD/CAD be above 1.4350 on Nov 20 at 9:30am ET?",
+      "subtitle": "Above 1.4350",
+      "category": "Financials",
+      "kalshi_market_url": "https://kalshi.com/markets/kxusdcadevent-20nov260930",
+      "orthogonality_bucket": "BUCKET_B_MACRO_ENERGY_COMMODITY",
+      "hours_to_expiration": 163.72,
+      "expiration_iso": "2026-11-20T14:30:00Z",
+      "quality_score": 15.675,
+      "oracle_edge_proof": "Independent longshot bid at 10c Yes (82c No bid, 8c two-sided spread across 21 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 10,
+        "best_no_bid_cents": 82,
+        "implied_yes_ask_cents": 18,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 83,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 8,
+        "top_no_queue_depth": 348,
+        "total_no_bid_qty": 1896,
+        "total_yes_bid_qty": 1900,
+        "total_book_depth_contracts": 3796,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": -0.0011,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0099,
+        "taker_fee_saved_cents_per_contract": 0.99,
+        "total_taker_fee_saved_on_position_dollars": 0.6,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 1328,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.63,
+        "max_profit_if_no_wins_dollars": 10.37,
+        "net_win_return_pct": 20.48,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.88-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 10c Yes (82c No bid, 8c two-sided spread across 21 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXUSDCADEVENT-20NOV260930",
+          "candidate_count": 21,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXUEFANLTOTAL-26NOV16MKDSLO-4",
+      "event_ticker": "KXUEFANLTOTAL-26NOV16MKDSLO",
+      "series_ticker": "",
+      "title": "Will over 3.5 goals be scored?",
+      "subtitle": "Over 3.5 goals scored",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxuefanltotal-26nov16mkdslo",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 76.97,
+      "expiration_iso": "2026-11-16T23:45:00Z",
+      "quality_score": 34.165,
+      "oracle_edge_proof": "Independent longshot bid at 17c Yes (81c No bid, 2c two-sided spread across 6 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 17,
+        "best_no_bid_cents": 81,
+        "implied_yes_ask_cents": 19,
+        "last_price_yes_cents": 18,
+        "recommended_maker_no_bid_cents": 82,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 2,
+        "top_no_queue_depth": 1231,
+        "total_no_bid_qty": 50942,
+        "total_yes_bid_qty": 7569,
+        "total_book_depth_contracts": 58511,
+        "volume_24h_contracts": 94.0,
+        "open_interest_contracts": 94.0,
+        "obi": 0.7413,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0103,
+        "taker_fee_saved_cents_per_contract": 1.03,
+        "total_taker_fee_saved_on_position_dollars": 0.63,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 20478,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.02,
+        "max_profit_if_no_wins_dollars": 10.98,
+        "net_win_return_pct": 21.95,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.56-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 17c Yes (81c No bid, 2c two-sided spread across 6 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXUEFANLTOTAL-26NOV16MKDSLO",
+          "candidate_count": 6,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXSERIECGAME-26NOV16PCSTOR-TOR",
+      "event_ticker": "KXSERIECGAME-26NOV16PCSTOR",
+      "series_ticker": "",
+      "title": "Sassari wins",
+      "subtitle": "Sassari",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxseriecgame-26nov16pcstor",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 75.97,
+      "expiration_iso": "2026-11-16T22:45:00Z",
+      "quality_score": 34.14,
+      "oracle_edge_proof": "Independent longshot bid at 16c Yes (80c No bid, 4c two-sided spread across 3 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 16,
+        "best_no_bid_cents": 80,
+        "implied_yes_ask_cents": 20,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 82,
+        "price_improvement_cents": 2
+      },
+      "microstructure_metrics": {
+        "spread_cents": 4,
+        "top_no_queue_depth": 403,
+        "total_no_bid_qty": 5741,
+        "total_yes_bid_qty": 4988,
+        "total_book_depth_contracts": 10729,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": 0.0702,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0103,
+        "taker_fee_saved_cents_per_contract": 1.03,
+        "total_taker_fee_saved_on_position_dollars": 0.63,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 3755,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.02,
+        "max_profit_if_no_wins_dollars": 10.98,
+        "net_win_return_pct": 21.95,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.56-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 16c Yes (80c No bid, 4c two-sided spread across 3 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXSERIECGAME-26NOV16PCSTOR",
+          "candidate_count": 3,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXUEFANLGAME-26NOV17WALPOR-TIE",
+      "event_ticker": "KXUEFANLGAME-26NOV17WALPOR",
+      "series_ticker": "",
+      "title": "Tie is the result",
+      "subtitle": "Tie",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxuefanlgame-26nov17walpor",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 99.97,
+      "expiration_iso": "2026-11-17T22:45:00Z",
+      "quality_score": 33.588,
+      "oracle_edge_proof": "Independent longshot bid at 16c Yes (80c No bid, 4c two-sided spread across 3 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 16,
+        "best_no_bid_cents": 80,
+        "implied_yes_ask_cents": 20,
+        "last_price_yes_cents": 13,
+        "recommended_maker_no_bid_cents": 82,
+        "price_improvement_cents": 2
+      },
+      "microstructure_metrics": {
+        "spread_cents": 4,
+        "top_no_queue_depth": 166,
+        "total_no_bid_qty": 41853,
+        "total_yes_bid_qty": 12856,
+        "total_book_depth_contracts": 54709,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 26.1,
+        "obi": 0.53,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0103,
+        "taker_fee_saved_cents_per_contract": 1.03,
+        "total_taker_fee_saved_on_position_dollars": 0.63,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 19148,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.02,
+        "max_profit_if_no_wins_dollars": 10.98,
+        "net_win_return_pct": 21.95,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.56-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 16c Yes (80c No bid, 4c two-sided spread across 3 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXUEFANLGAME-26NOV17WALPOR",
+          "candidate_count": 3,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXGOLDEVENT-17NOV261830-T395000",
+      "event_ticker": "KXGOLDEVENT-17NOV261830",
+      "series_ticker": "",
+      "title": "Will gold be above $3950 on Nov 17 at 6:30pm ET?",
+      "subtitle": "Above $3950",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxgoldevent-17nov261830",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 100.72,
+      "expiration_iso": "2026-11-17T23:30:00Z",
+      "quality_score": 32.005,
+      "oracle_edge_proof": "Independent longshot bid at 15c Yes (81c No bid, 4c two-sided spread across 17 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 15,
+        "best_no_bid_cents": 81,
+        "implied_yes_ask_cents": 19,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 82,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 4,
+        "top_no_queue_depth": 150,
+        "total_no_bid_qty": 2269,
+        "total_yes_bid_qty": 1307,
+        "total_book_depth_contracts": 3576,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": 0.269,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0103,
+        "taker_fee_saved_cents_per_contract": 1.03,
+        "total_taker_fee_saved_on_position_dollars": 0.63,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 1251,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.02,
+        "max_profit_if_no_wins_dollars": 10.98,
+        "net_win_return_pct": 21.95,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.56-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 15c Yes (81c No bid, 4c two-sided spread across 17 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXGOLDEVENT-17NOV261830",
+          "candidate_count": 17,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXPERLIGA1GAME-26NOV16MOQCAG-CAG",
+      "event_ticker": "KXPERLIGA1GAME-26NOV16MOQCAG",
+      "series_ticker": "",
+      "title": "Atletico Grau wins",
+      "subtitle": "Atletico Grau",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxperliga1game-26nov16moqcag",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 76.47,
+      "expiration_iso": "2026-11-16T23:15:00Z",
+      "quality_score": 30.477,
+      "oracle_edge_proof": "Independent longshot bid at 13c Yes (85c No bid, 2c two-sided spread across 3 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 13,
+        "best_no_bid_cents": 85,
+        "implied_yes_ask_cents": 15,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 86,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 2,
+        "top_no_queue_depth": 561,
+        "total_no_bid_qty": 5803,
+        "total_yes_bid_qty": 17445,
+        "total_book_depth_contracts": 23248,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": -0.5008,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0084,
+        "taker_fee_saved_cents_per_contract": 0.84,
+        "total_taker_fee_saved_on_position_dollars": 0.5,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 59,
+        "liquidity_cap_35pct_book_contracts": 8136,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 59,
+        "total_order_exposure_dollars": 50.74,
+        "max_profit_if_no_wins_dollars": 8.26,
+        "net_win_return_pct": 16.28,
+        "payoff_asymmetry_losses_to_wipe_wins": "6.14-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 13c Yes (85c No bid, 2c two-sided spread across 3 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXPERLIGA1GAME-26NOV16MOQCAG",
+          "candidate_count": 3,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXUEFANLSPREAD-26NOV16SUISCO-SUI3",
+      "event_ticker": "KXUEFANLSPREAD-26NOV16SUISCO",
+      "series_ticker": "",
+      "title": "Switzerland wins by more than 2.5 goals?",
+      "subtitle": "Switzerland wins by more than 2.5 goals",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxuefanlspread-26nov16suisco",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 76.97,
+      "expiration_iso": "2026-11-16T23:45:00Z",
+      "quality_score": 30.473,
+      "oracle_edge_proof": "Independent longshot bid at 15c Yes (82c No bid, 3c two-sided spread across 4 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 15,
+        "best_no_bid_cents": 82,
+        "implied_yes_ask_cents": 18,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 83,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 3,
+        "top_no_queue_depth": 1129,
+        "total_no_bid_qty": 53571,
+        "total_yes_bid_qty": 20293,
+        "total_book_depth_contracts": 73864,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": 0.4505,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0099,
+        "taker_fee_saved_cents_per_contract": 0.99,
+        "total_taker_fee_saved_on_position_dollars": 0.6,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 25852,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.63,
+        "max_profit_if_no_wins_dollars": 10.37,
+        "net_win_return_pct": 20.48,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.88-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 15c Yes (82c No bid, 3c two-sided spread across 4 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXUEFANLSPREAD-26NOV16SUISCO",
+          "candidate_count": 4,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXCOPPEREVENT-17NOV261830-T630000",
+      "event_ticker": "KXCOPPEREVENT-17NOV261830",
+      "series_ticker": "",
+      "title": "Will copper be above $6.30 on Nov 17 at 6:30pm ET?",
+      "subtitle": "Above $6.30",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxcopperevent-17nov261830",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 100.72,
+      "expiration_iso": "2026-11-17T23:30:00Z",
+      "quality_score": 30.405,
+      "oracle_edge_proof": "Independent longshot bid at 14c Yes (82c No bid, 4c two-sided spread across 17 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 14,
+        "best_no_bid_cents": 82,
+        "implied_yes_ask_cents": 18,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 83,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 4,
+        "top_no_queue_depth": 150,
+        "total_no_bid_qty": 2544,
+        "total_yes_bid_qty": 1740,
+        "total_book_depth_contracts": 4284,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": 0.1877,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0099,
+        "taker_fee_saved_cents_per_contract": 0.99,
+        "total_taker_fee_saved_on_position_dollars": 0.6,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 1499,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.63,
+        "max_profit_if_no_wins_dollars": 10.37,
+        "net_win_return_pct": 20.48,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.88-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 14c Yes (82c No bid, 4c two-sided spread across 17 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXCOPPEREVENT-17NOV261830",
+          "candidate_count": 17,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXAPRPOTUS-26NOV20-37.8",
+      "event_ticker": "KXAPRPOTUS-26NOV20",
+      "series_ticker": "KXAPRPOTUS",
+      "title": "Will the President's approval rating be below 37.9 according to RealClearPolitics?",
+      "subtitle": "Below 37.9",
+      "category": "Politics",
+      "kalshi_market_url": "https://kalshi.com/markets/kxaprpotus-26nov20",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 165.22,
+      "expiration_iso": "2026-11-20T16:00:00Z",
+      "quality_score": 30.076,
+      "oracle_edge_proof": "Tail longshot bid at 15c Yes (mutually exclusive event modal peak 20c Yes across 8 slices); 5c spread.",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 15,
+        "best_no_bid_cents": 80,
+        "implied_yes_ask_cents": 20,
+        "last_price_yes_cents": 19,
+        "recommended_maker_no_bid_cents": 82,
+        "price_improvement_cents": 2
+      },
+      "microstructure_metrics": {
+        "spread_cents": 5,
+        "top_no_queue_depth": 712,
+        "total_no_bid_qty": 21247,
+        "total_yes_bid_qty": 2585,
+        "total_book_depth_contracts": 23832,
+        "volume_24h_contracts": 120.4,
+        "open_interest_contracts": 120.4,
+        "obi": 0.7831,
+        "mutually_exclusive_event": true,
+        "event_overround": 1.21,
+        "taker_fee_saved_dollars_per_contract": 0.0103,
+        "taker_fee_saved_cents_per_contract": 1.03,
+        "total_taker_fee_saved_on_position_dollars": 0.63,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 8341,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.02,
+        "max_profit_if_no_wins_dollars": 10.98,
+        "net_win_return_pct": 21.95,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.56-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Tail longshot bid at 15c Yes (mutually exclusive event modal peak 20c Yes across 8 slices); 5c spread.",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXAPRPOTUS-26NOV20",
+          "candidate_count": 8,
+          "mutually_exclusive": true,
+          "event_overround": 1.21,
+          "field_inflation_flagged": true
+        }
+      }
+    },
+    {
+      "ticker": "KXUEFANLSCORE-26NOV15BLRALB-BLR0ALB1",
+      "event_ticker": "KXUEFANLSCORE-26NOV15BLRALB",
+      "series_ticker": "",
+      "title": "Final score Albania wins 1-0?",
+      "subtitle": "Albania wins 1-0",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxuefanlscore-26nov15blralb",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 49.22,
+      "expiration_iso": "2026-11-15T20:00:00Z",
+      "quality_score": 29.556,
+      "oracle_edge_proof": "Independent longshot bid at 12c Yes (85c No bid, 3c two-sided spread across 30 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 12,
+        "best_no_bid_cents": 85,
+        "implied_yes_ask_cents": 15,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 86,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 3,
+        "top_no_queue_depth": 592,
+        "total_no_bid_qty": 7399,
+        "total_yes_bid_qty": 589,
+        "total_book_depth_contracts": 7988,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": 0.8525,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0084,
+        "taker_fee_saved_cents_per_contract": 0.84,
+        "total_taker_fee_saved_on_position_dollars": 0.5,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 59,
+        "liquidity_cap_35pct_book_contracts": 2795,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 59,
+        "total_order_exposure_dollars": 50.74,
+        "max_profit_if_no_wins_dollars": 8.26,
+        "net_win_return_pct": 16.28,
+        "payoff_asymmetry_losses_to_wipe_wins": "6.14-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 12c Yes (85c No bid, 3c two-sided spread across 30 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXUEFANLSCORE-26NOV15BLRALB",
+          "candidate_count": 30,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXUEFANLGAME-26NOV16MKDSLO-MKD",
+      "event_ticker": "KXUEFANLGAME-26NOV16MKDSLO",
+      "series_ticker": "",
+      "title": "North Macedonia wins",
+      "subtitle": "North Macedonia",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxuefanlgame-26nov16mkdslo",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 75.97,
+      "expiration_iso": "2026-11-16T22:45:00Z",
+      "quality_score": 28.656,
+      "oracle_edge_proof": "Independent longshot bid at 14c Yes (84c No bid, 2c two-sided spread across 3 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 14,
+        "best_no_bid_cents": 84,
+        "implied_yes_ask_cents": 16,
+        "last_price_yes_cents": 14,
+        "recommended_maker_no_bid_cents": 85,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 2,
+        "top_no_queue_depth": 1424,
+        "total_no_bid_qty": 27169,
+        "total_yes_bid_qty": 66106,
+        "total_book_depth_contracts": 93275,
+        "volume_24h_contracts": 22.0,
+        "open_interest_contracts": 27.1,
+        "obi": -0.4174,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0089,
+        "taker_fee_saved_cents_per_contract": 0.89,
+        "total_taker_fee_saved_on_position_dollars": 0.53,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 59,
+        "liquidity_cap_35pct_book_contracts": 32646,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 59,
+        "total_order_exposure_dollars": 50.15,
+        "max_profit_if_no_wins_dollars": 8.85,
+        "net_win_return_pct": 17.65,
+        "payoff_asymmetry_losses_to_wipe_wins": "5.67-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 14c Yes (84c No bid, 2c two-sided spread across 3 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXUEFANLGAME-26NOV16MKDSLO",
+          "candidate_count": 3,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXUEFANLSCORE-26NOV15BLRALB-BLR1ALB1",
+      "event_ticker": "KXUEFANLSCORE-26NOV15BLRALB",
+      "series_ticker": "",
+      "title": "Final score Draw 1-1?",
+      "subtitle": "Draw 1-1",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxuefanlscore-26nov15blralb",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 49.22,
+      "expiration_iso": "2026-11-15T20:00:00Z",
+      "quality_score": 28.08,
+      "oracle_edge_proof": "Independent longshot bid at 12c Yes (84c No bid, 4c two-sided spread across 30 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 12,
+        "best_no_bid_cents": 84,
+        "implied_yes_ask_cents": 16,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 85,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 4,
+        "top_no_queue_depth": 736,
+        "total_no_bid_qty": 7495,
+        "total_yes_bid_qty": 571,
+        "total_book_depth_contracts": 8066,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": 0.8584,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0089,
+        "taker_fee_saved_cents_per_contract": 0.89,
+        "total_taker_fee_saved_on_position_dollars": 0.53,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 59,
+        "liquidity_cap_35pct_book_contracts": 2823,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 59,
+        "total_order_exposure_dollars": 50.15,
+        "max_profit_if_no_wins_dollars": 8.85,
+        "net_win_return_pct": 17.65,
+        "payoff_asymmetry_losses_to_wipe_wins": "5.67-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 12c Yes (84c No bid, 4c two-sided spread across 30 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXUEFANLSCORE-26NOV15BLRALB",
+          "candidate_count": 30,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXURYPDGAME-26NOV15DEFPEN-DEF",
+      "event_ticker": "KXURYPDGAME-26NOV15DEFPEN",
+      "series_ticker": "",
+      "title": "Defensor wins",
+      "subtitle": "Defensor",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxurypdgame-26nov15defpen",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 55.22,
+      "expiration_iso": "2026-11-16T02:00:00Z",
+      "quality_score": 27.837,
+      "oracle_edge_proof": "Independent longshot bid at 14c Yes (82c No bid, 4c two-sided spread across 3 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 14,
+        "best_no_bid_cents": 82,
+        "implied_yes_ask_cents": 18,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 83,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 4,
+        "top_no_queue_depth": 1503,
+        "total_no_bid_qty": 18035,
+        "total_yes_bid_qty": 20484,
+        "total_book_depth_contracts": 38519,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": -0.0636,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0099,
+        "taker_fee_saved_cents_per_contract": 0.99,
+        "total_taker_fee_saved_on_position_dollars": 0.6,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 13481,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.63,
+        "max_profit_if_no_wins_dollars": 10.37,
+        "net_win_return_pct": 20.48,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.88-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 14c Yes (82c No bid, 4c two-sided spread across 3 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXURYPDGAME-26NOV15DEFPEN",
+          "candidate_count": 3,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXUSLTOTAL-26NOV15NEWSRP-5",
+      "event_ticker": "KXUSLTOTAL-26NOV15NEWSRP",
+      "series_ticker": "",
+      "title": "Will over 4.5 goals be scored?",
+      "subtitle": "Reg Time: Over 4.5 goals scored",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxusltotal-26nov15newsrp",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 57.22,
+      "expiration_iso": "2026-11-16T04:00:00Z",
+      "quality_score": 27.164,
+      "oracle_edge_proof": "Independent longshot bid at 10c Yes (87c No bid, 3c two-sided spread across 6 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 10,
+        "best_no_bid_cents": 87,
+        "implied_yes_ask_cents": 13,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 88,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 3,
+        "top_no_queue_depth": 265,
+        "total_no_bid_qty": 3174,
+        "total_yes_bid_qty": 1551,
+        "total_book_depth_contracts": 4725,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": 0.3435,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0074,
+        "taker_fee_saved_cents_per_contract": 0.74,
+        "total_taker_fee_saved_on_position_dollars": 0.42,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 57,
+        "liquidity_cap_35pct_book_contracts": 1653,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 57,
+        "total_order_exposure_dollars": 50.16,
+        "max_profit_if_no_wins_dollars": 6.84,
+        "net_win_return_pct": 13.64,
+        "payoff_asymmetry_losses_to_wipe_wins": "7.33-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 10c Yes (87c No bid, 3c two-sided spread across 6 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXUSLTOTAL-26NOV15NEWSRP",
+          "candidate_count": 6,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXUEFANLGAME-26NOV17ISRAUT-ISR",
+      "event_ticker": "KXUEFANLGAME-26NOV17ISRAUT",
+      "series_ticker": "",
+      "title": "Israel wins",
+      "subtitle": "Israel",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxuefanlgame-26nov17israut",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 99.97,
+      "expiration_iso": "2026-11-17T22:45:00Z",
+      "quality_score": 26.52,
+      "oracle_edge_proof": "Independent longshot bid at 13c Yes (80c No bid, 7c two-sided spread across 3 event market(s)).",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 13,
+        "best_no_bid_cents": 80,
+        "implied_yes_ask_cents": 20,
+        "last_price_yes_cents": 18,
+        "recommended_maker_no_bid_cents": 82,
+        "price_improvement_cents": 2
+      },
+      "microstructure_metrics": {
+        "spread_cents": 7,
+        "top_no_queue_depth": 58,
+        "total_no_bid_qty": 15527,
+        "total_yes_bid_qty": 55987,
+        "total_book_depth_contracts": 71514,
+        "volume_24h_contracts": 10.5,
+        "open_interest_contracts": 61.3,
+        "obi": -0.5658,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0103,
+        "taker_fee_saved_cents_per_contract": 1.03,
+        "total_taker_fee_saved_on_position_dollars": 0.63,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 61,
+        "liquidity_cap_35pct_book_contracts": 25029,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 61,
+        "total_order_exposure_dollars": 50.02,
+        "max_profit_if_no_wins_dollars": 10.98,
+        "net_win_return_pct": 21.95,
+        "payoff_asymmetry_losses_to_wipe_wins": "4.56-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Independent longshot bid at 13c Yes (80c No bid, 7c two-sided spread across 3 event market(s)).",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXUEFANLGAME-26NOV17ISRAUT",
+          "candidate_count": 3,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXAPRPOTUS-26NOV20-38.0",
+      "event_ticker": "KXAPRPOTUS-26NOV20",
+      "series_ticker": "KXAPRPOTUS",
+      "title": "Will the President's approval rating be between 37.9 and 38.1 according to RealClearPolitics?",
+      "subtitle": "37.9 to 38.1",
+      "category": "Politics",
+      "kalshi_market_url": "https://kalshi.com/markets/kxaprpotus-26nov20",
+      "orthogonality_bucket": "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
+      "hours_to_expiration": 165.22,
+      "expiration_iso": "2026-11-20T16:00:00Z",
+      "quality_score": 25.204,
+      "oracle_edge_proof": "Tail longshot bid at 12c Yes (mutually exclusive event modal peak 20c Yes across 8 slices); 5c spread.",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 12,
+        "best_no_bid_cents": 83,
+        "implied_yes_ask_cents": 17,
+        "last_price_yes_cents": 17,
+        "recommended_maker_no_bid_cents": 84,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 5,
+        "top_no_queue_depth": 730,
+        "total_no_bid_qty": 24477,
+        "total_yes_bid_qty": 1944,
+        "total_book_depth_contracts": 26421,
+        "volume_24h_contracts": 66.0,
+        "open_interest_contracts": 66.0,
+        "obi": 0.8528,
+        "mutually_exclusive_event": true,
+        "event_overround": 1.21,
+        "taker_fee_saved_dollars_per_contract": 0.0094,
+        "taker_fee_saved_cents_per_contract": 0.94,
+        "total_taker_fee_saved_on_position_dollars": 0.56,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 60,
+        "liquidity_cap_35pct_book_contracts": 9247,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 60,
+        "total_order_exposure_dollars": 50.4,
+        "max_profit_if_no_wins_dollars": 9.6,
+        "net_win_return_pct": 19.05,
+        "payoff_asymmetry_losses_to_wipe_wins": "5.25-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Tail longshot bid at 12c Yes (mutually exclusive event modal peak 20c Yes across 8 slices); 5c spread.",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXAPRPOTUS-26NOV20",
+          "candidate_count": 8,
+          "mutually_exclusive": true,
+          "event_overround": 1.21,
+          "field_inflation_flagged": true
         }
       }
     }
