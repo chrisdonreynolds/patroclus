@@ -1,32 +1,80 @@
 {
-  "scanner_name": "Patroclus Kalshi Longshot-Bias Underwriting Scanner v2.0",
-  "generated_at_utc": "2026-11-13T07:05:32.102405+00:00",
+  "scanner_name": "Patroclus Kalshi Longshot-Bias Underwriting Scanner v3.0",
+  "generated_at_utc": "2026-11-13T18:22:41.205360+00:00",
   "repository_url": "https://github.com/chrisdonreynolds/patroclus",
   "raw_json_url": "https://raw.githubusercontent.com/chrisdonreynolds/patroclus/main/kalshi_snapshot.json",
   "raw_md_url": "https://raw.githubusercontent.com/chrisdonreynolds/patroclus/main/kalshi_snapshot.md",
-  "user_agent": "PatroclusKalshiScanner/2.0 (christopherdonreynolds@gmail.com)",
+  "user_agent": "PatroclusKalshiScanner/3.0 (christopherdonreynolds@gmail.com)",
   "execution_mode": "CHOICE_1_MANUAL_APP_EXECUTION_ONLY",
   "bankroll_and_kelly_sizing": {
-    "source": "LIVE_KALSHI_PORTFOLIO_API (Live=$1000.60; SizingFloor=$200.00)",
+    "source": "LIVE_KALSHI_PORTFOLIO_API (Live=$1016.18; SizingFloor=$200.00)",
     "authenticated": true,
-    "available_cash_cents": 100060,
-    "portfolio_value_cents": 0,
-    "available_cash_dollars": 1000.6,
-    "portfolio_value_dollars": 0.0,
-    "live_reported_bankroll_dollars": 1000.6,
+    "available_cash_cents": 77018,
+    "portfolio_value_cents": 24600,
+    "available_cash_dollars": 770.18,
+    "portfolio_value_dollars": 246.0,
+    "live_reported_bankroll_dollars": 1016.18,
     "used_minimum_sizing_floor": false,
-    "total_liquid_bankroll_dollars": 1000.6,
-    "max_dollar_risk_5pct": 50.03,
-    "max_daily_deployed_15pct": 150.09,
-    "dry_powder_reserve_85pct": 850.51,
+    "total_liquid_bankroll_dollars": 1016.18,
+    "max_dollar_risk_5pct": 50.81,
+    "max_daily_deployed_15pct": 152.43,
+    "dry_powder_reserve_85pct": 863.75,
     "endpoint_queried": "https://external-api.kalshi.com/trade-api/v2/portfolio/balance"
   },
   "harvest_statistics": {
-    "pages_fetched": 41,
-    "total_open_markets_scanned": 576,
-    "qualifying_two_sided_candidates": 0
+    "pages_fetched": 49,
+    "events_scanned": 4000,
+    "total_open_markets_scanned": 9846
+  },
+  "diagnostics_funnel": {
+    "markets_scanned": 9846,
+    "in_8h_168h_window": 202,
+    "passed_prelim_quote_gate": 36,
+    "orderbooks_non_empty": 36,
+    "passed_spread_and_depth_gate": 9,
+    "passed_oracle_tail_gate": 3,
+    "candidates_by_bucket": {
+      "BUCKET_A_WEATHER_ATMOSPHERIC": 0,
+      "BUCKET_B_MACRO_ENERGY_COMMODITY": 3,
+      "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE": 0
+    }
   },
   "primary_truth_feeds": {
+    "vertical_2_3_space_procedural": {
+      "upcoming_launches": [
+        {
+          "name": "Starship | Starlink Group 31-2 (Starship Flight 15)",
+          "net_utc": "2026-11-13T22:45:00Z",
+          "status_abbrev": "TBC"
+        },
+        {
+          "name": "Soyuz 2.1b/Fregat-M | MKA Kinosputnik, KOEN and others",
+          "net_utc": "2026-11-14T01:16:00Z",
+          "status_abbrev": "Go"
+        },
+        {
+          "name": "Electron | The Mountain God Rises (iQPS Launch 10)",
+          "net_utc": "2026-11-14T05:30:00Z",
+          "status_abbrev": "Go"
+        },
+        {
+          "name": "Vulcan VC6L | Amazon Leo (LV-01)",
+          "net_utc": "2026-11-14T17:32:30Z",
+          "status_abbrev": "Go"
+        },
+        {
+          "name": "Falcon 9 Block 5 | USSF-317",
+          "net_utc": "2026-11-18T03:14:00Z",
+          "status_abbrev": "Go"
+        },
+        {
+          "name": "Long March 2D | Unknown Payload",
+          "net_utc": "2026-11-18T22:50:00Z",
+          "status_abbrev": "Go"
+        }
+      ],
+      "federal_register_recent_docs": 5
+    },
     "vertical_6_weather": {
       "vertical": "Daily High/Low Weather Station Grids (NWS + METAR)",
       "source_urls": [
@@ -36,114 +84,242 @@
         "KNYC": {
           "station_id": "KNYC",
           "city": "New York Central Park",
+          "timezone": "America/New_York",
+          "today_local_date": "2026-11-13",
           "points_url": "https://api.weather.gov/points/40.7829,-73.9654",
-          "observations_url": "https://api.weather.gov/stations/KNYC/observations?limit=24",
+          "observations_url": "https://api.weather.gov/stations/KNYC/observations?limit=30",
           "forecast_hourly_url": "https://api.weather.gov/gridpoints/OKX/34,45/forecast/hourly",
-          "hourly_forecast_peak_f": 48.0,
-          "midnight_00_02_temp_f": 51.1,
+          "daily_forecast_highs_f": {
+            "2026-11-13": 43.0,
+            "2026-11-14": 46.0,
+            "2026-11-15": 49.0,
+            "2026-11-16": 51.0,
+            "2026-11-17": 50.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 42.0,
+            "2026-11-14": 38.0,
+            "2026-11-15": 40.0,
+            "2026-11-16": 39.0,
+            "2026-11-17": 37.0
+          },
+          "hourly_forecast_peak_f": 43.0,
+          "observed_today_max_f": 48.0,
+          "midnight_00_02_temp_f": 48.0,
           "midnight_clocks_trap_triggered": true,
-          "latest_observed_temp_c": 8.3,
-          "latest_observed_temp_f": 46.9,
-          "metar_celsius_rounding_warning": true,
-          "safe_no_floor_f": 55.1
+          "latest_observed_temp_c": null,
+          "latest_observed_temp_f": null,
+          "metar_celsius_rounding_warning": true
         },
         "KMDW": {
           "station_id": "KMDW",
           "city": "Chicago Midway",
+          "timezone": "America/Chicago",
+          "today_local_date": "2026-11-13",
           "points_url": "https://api.weather.gov/points/41.7868,-87.7522",
-          "observations_url": "https://api.weather.gov/stations/KMDW/observations?limit=24",
+          "observations_url": "https://api.weather.gov/stations/KMDW/observations?limit=30",
           "forecast_hourly_url": "https://api.weather.gov/gridpoints/LOT/72,69/forecast/hourly",
-          "hourly_forecast_peak_f": 40.0,
-          "midnight_00_02_temp_f": 41.0,
-          "midnight_clocks_trap_triggered": true,
-          "latest_observed_temp_c": 4.0,
-          "latest_observed_temp_f": 39.2,
-          "metar_celsius_rounding_warning": true,
-          "safe_no_floor_f": 45.0
+          "daily_forecast_highs_f": {
+            "2026-11-13": 42.0,
+            "2026-11-14": 46.0,
+            "2026-11-15": 49.0,
+            "2026-11-16": 51.0,
+            "2026-11-17": 47.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 36.0,
+            "2026-11-14": 34.0,
+            "2026-11-15": 34.0,
+            "2026-11-16": 34.0,
+            "2026-11-17": 33.0
+          },
+          "hourly_forecast_peak_f": 42.0,
+          "observed_today_max_f": 43.0,
+          "midnight_00_02_temp_f": null,
+          "midnight_clocks_trap_triggered": false,
+          "latest_observed_temp_c": 5.0,
+          "latest_observed_temp_f": 41.0,
+          "metar_celsius_rounding_warning": true
         },
         "KHOU": {
           "station_id": "KHOU",
           "city": "Houston Hobby",
+          "timezone": "America/Chicago",
+          "today_local_date": "2026-11-13",
           "points_url": "https://api.weather.gov/points/29.6454,-95.2789",
-          "observations_url": "https://api.weather.gov/stations/KHOU/observations?limit=24",
+          "observations_url": "https://api.weather.gov/stations/KHOU/observations?limit=30",
           "forecast_hourly_url": "https://api.weather.gov/gridpoints/HGX/66,89/forecast/hourly",
-          "hourly_forecast_peak_f": 74.0,
-          "midnight_00_02_temp_f": 59.0,
+          "daily_forecast_highs_f": {
+            "2026-11-13": 76.0,
+            "2026-11-14": 66.0,
+            "2026-11-15": 67.0,
+            "2026-11-16": 58.0,
+            "2026-11-17": 60.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 60.0,
+            "2026-11-14": 56.0,
+            "2026-11-15": 60.0,
+            "2026-11-16": 55.0,
+            "2026-11-17": 53.0
+          },
+          "hourly_forecast_peak_f": 76.0,
+          "observed_today_max_f": 77.0,
+          "midnight_00_02_temp_f": null,
           "midnight_clocks_trap_triggered": false,
-          "latest_observed_temp_c": 13.0,
-          "latest_observed_temp_f": 55.4,
-          "metar_celsius_rounding_warning": true,
-          "safe_no_floor_f": 78.0
+          "latest_observed_temp_c": 25.0,
+          "latest_observed_temp_f": 77.0,
+          "metar_celsius_rounding_warning": true
         },
         "KDEN": {
           "station_id": "KDEN",
           "city": "Denver International",
+          "timezone": "America/Denver",
+          "today_local_date": "2026-11-13",
           "points_url": "https://api.weather.gov/points/39.8561,-104.6737",
-          "observations_url": "https://api.weather.gov/stations/KDEN/observations?limit=24",
+          "observations_url": "https://api.weather.gov/stations/KDEN/observations?limit=30",
           "forecast_hourly_url": "https://api.weather.gov/gridpoints/BOU/74,66/forecast/hourly",
+          "daily_forecast_highs_f": {
+            "2026-11-13": 64.0,
+            "2026-11-14": 53.0,
+            "2026-11-15": 55.0,
+            "2026-11-16": 61.0,
+            "2026-11-17": 44.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 44.0,
+            "2026-11-14": 37.0,
+            "2026-11-15": 35.0,
+            "2026-11-16": 35.0,
+            "2026-11-17": 37.0
+          },
           "hourly_forecast_peak_f": 64.0,
-          "midnight_00_02_temp_f": 48.2,
+          "observed_today_max_f": 57.2,
+          "midnight_00_02_temp_f": null,
           "midnight_clocks_trap_triggered": false,
-          "latest_observed_temp_c": 5.0,
-          "latest_observed_temp_f": 41.0,
-          "metar_celsius_rounding_warning": true,
-          "safe_no_floor_f": 68.0
+          "latest_observed_temp_c": 14.0,
+          "latest_observed_temp_f": 57.2,
+          "metar_celsius_rounding_warning": true
         },
         "KLAX": {
           "station_id": "KLAX",
           "city": "Los Angeles International",
+          "timezone": "America/Los_Angeles",
+          "today_local_date": "2026-11-13",
           "points_url": "https://api.weather.gov/points/33.9425,-118.4081",
-          "observations_url": "https://api.weather.gov/stations/KLAX/observations?limit=24",
+          "observations_url": "https://api.weather.gov/stations/KLAX/observations?limit=30",
           "forecast_hourly_url": "https://api.weather.gov/gridpoints/LOX/148,41/forecast/hourly",
-          "hourly_forecast_peak_f": 72.0,
-          "midnight_00_02_temp_f": 66.2,
+          "daily_forecast_highs_f": {
+            "2026-11-13": 70.0,
+            "2026-11-14": 70.0,
+            "2026-11-15": 71.0,
+            "2026-11-16": 68.0,
+            "2026-11-17": 58.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 65.0,
+            "2026-11-14": 59.0,
+            "2026-11-15": 57.0,
+            "2026-11-16": 58.0,
+            "2026-11-17": 54.0
+          },
+          "hourly_forecast_peak_f": 70.0,
+          "observed_today_max_f": 63.0,
+          "midnight_00_02_temp_f": null,
           "midnight_clocks_trap_triggered": false,
-          "latest_observed_temp_c": 18.0,
-          "latest_observed_temp_f": 64.4,
-          "metar_celsius_rounding_warning": true,
-          "safe_no_floor_f": 76.0
+          "latest_observed_temp_c": 17.0,
+          "latest_observed_temp_f": 62.6,
+          "metar_celsius_rounding_warning": true
         },
         "KMIA": {
           "station_id": "KMIA",
           "city": "Miami International",
+          "timezone": "America/New_York",
+          "today_local_date": "2026-11-13",
           "points_url": "https://api.weather.gov/points/25.7959,-80.287",
-          "observations_url": "https://api.weather.gov/stations/KMIA/observations?limit=24",
+          "observations_url": "https://api.weather.gov/stations/KMIA/observations?limit=30",
           "forecast_hourly_url": "https://api.weather.gov/gridpoints/MFL/106,51/forecast/hourly",
-          "hourly_forecast_peak_f": 79.0,
-          "midnight_00_02_temp_f": 75.9,
+          "daily_forecast_highs_f": {
+            "2026-11-13": 80.0,
+            "2026-11-14": 72.0,
+            "2026-11-15": 78.0,
+            "2026-11-16": 79.0,
+            "2026-11-17": 78.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 67.0,
+            "2026-11-14": 60.0,
+            "2026-11-15": 60.0,
+            "2026-11-16": 70.0,
+            "2026-11-17": 73.0
+          },
+          "hourly_forecast_peak_f": 80.0,
+          "observed_today_max_f": 80.6,
+          "midnight_00_02_temp_f": null,
           "midnight_clocks_trap_triggered": false,
-          "latest_observed_temp_c": 23.0,
-          "latest_observed_temp_f": 73.4,
-          "metar_celsius_rounding_warning": true,
-          "safe_no_floor_f": 83.0
+          "latest_observed_temp_c": 25.0,
+          "latest_observed_temp_f": 77.0,
+          "metar_celsius_rounding_warning": true
         },
         "KAUS": {
           "station_id": "KAUS",
           "city": "Austin Bergstrom",
+          "timezone": "America/Chicago",
+          "today_local_date": "2026-11-13",
           "points_url": "https://api.weather.gov/points/30.1975,-97.6664",
-          "observations_url": "https://api.weather.gov/stations/KAUS/observations?limit=24",
+          "observations_url": "https://api.weather.gov/stations/KAUS/observations?limit=30",
           "forecast_hourly_url": "https://api.weather.gov/gridpoints/EWX/159,88/forecast/hourly",
+          "daily_forecast_highs_f": {
+            "2026-11-13": 77.0,
+            "2026-11-14": 69.0,
+            "2026-11-15": 66.0,
+            "2026-11-16": 57.0,
+            "2026-11-17": 55.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 57.0,
+            "2026-11-14": 49.0,
+            "2026-11-15": 56.0,
+            "2026-11-16": 49.0,
+            "2026-11-17": 50.0
+          },
           "hourly_forecast_peak_f": 77.0,
-          "midnight_00_02_temp_f": 55.9,
+          "observed_today_max_f": 77.0,
+          "midnight_00_02_temp_f": null,
           "midnight_clocks_trap_triggered": false,
-          "latest_observed_temp_c": 12.0,
-          "latest_observed_temp_f": 53.6,
-          "metar_celsius_rounding_warning": true,
-          "safe_no_floor_f": 81.0
+          "latest_observed_temp_c": 25.0,
+          "latest_observed_temp_f": 77.0,
+          "metar_celsius_rounding_warning": true
         },
         "KPHL": {
           "station_id": "KPHL",
           "city": "Philadelphia International",
+          "timezone": "America/New_York",
+          "today_local_date": "2026-11-13",
           "points_url": "https://api.weather.gov/points/39.8744,-75.2424",
-          "observations_url": "https://api.weather.gov/stations/KPHL/observations?limit=24",
+          "observations_url": "https://api.weather.gov/stations/KPHL/observations?limit=30",
           "forecast_hourly_url": "https://api.weather.gov/gridpoints/PHI/48,75/forecast/hourly",
-          "hourly_forecast_peak_f": 49.0,
-          "midnight_00_02_temp_f": 51.8,
-          "midnight_clocks_trap_triggered": true,
-          "latest_observed_temp_c": 9.0,
-          "latest_observed_temp_f": 48.2,
-          "metar_celsius_rounding_warning": true,
-          "safe_no_floor_f": 55.8
+          "daily_forecast_highs_f": {
+            "2026-11-13": 42.0,
+            "2026-11-14": 48.0,
+            "2026-11-15": 51.0,
+            "2026-11-16": 52.0,
+            "2026-11-17": 49.0
+          },
+          "daily_forecast_lows_f": {
+            "2026-11-13": 40.0,
+            "2026-11-14": 37.0,
+            "2026-11-15": 37.0,
+            "2026-11-16": 35.0,
+            "2026-11-17": 33.0
+          },
+          "hourly_forecast_peak_f": 42.0,
+          "observed_today_max_f": 42.8,
+          "midnight_00_02_temp_f": null,
+          "midnight_clocks_trap_triggered": false,
+          "latest_observed_temp_c": 6.0,
+          "latest_observed_temp_f": 42.8,
+          "metar_celsius_rounding_warning": true
         }
       }
     },
@@ -154,15 +330,197 @@
         "https://ir.eia.gov/wpsr/psw01.csv"
       ],
       "aaa_national_regular_gas": {
-        "current_regular_avg": 3.9081,
-        "safe_no_ceiling_strike": 3.933
+        "current_regular_avg": 3.8724
       }
     }
   },
   "selected_3_orthogonal_picks": {
     "BUCKET_A_WEATHER_ATMOSPHERIC": null,
-    "BUCKET_B_MACRO_ENERGY_COMMODITY": null,
+    "BUCKET_B_MACRO_ENERGY_COMMODITY": {
+      "ticker": "KXWTI-26NOV1614-T90.99",
+      "event_ticker": "KXWTI-26NOV1614",
+      "series_ticker": "KXWTI",
+      "title": "Will the WTI crude oil settlement price be above 90.99 USD/Bbl on Nov 16, 2026?",
+      "subtitle": "Above $90.99",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxwti-26nov1614",
+      "orthogonality_bucket": "BUCKET_B_MACRO_ENERGY_COMMODITY",
+      "hours_to_expiration": 73.12,
+      "expiration_iso": "2026-11-16T19:30:00Z",
+      "quality_score": 24.33,
+      "oracle_edge_proof": "Tail longshot bid at 13c Yes (event consensus peak 97c Yes across 30 market(s)); verified two-sided book.",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 13,
+        "best_no_bid_cents": 83,
+        "implied_yes_ask_cents": 17,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 84,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 4,
+        "top_no_queue_depth": 1500,
+        "total_no_bid_qty": 23153,
+        "total_yes_bid_qty": 2088,
+        "total_book_depth_contracts": 25241,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": 0.8346,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0094,
+        "taker_fee_saved_cents_per_contract": 0.94,
+        "total_taker_fee_saved_on_position_dollars": 0.56,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 60,
+        "liquidity_cap_35pct_book_contracts": 8834,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 60,
+        "total_order_exposure_dollars": 50.4,
+        "max_profit_if_no_wins_dollars": 9.6,
+        "net_win_return_pct": 19.05,
+        "payoff_asymmetry_losses_to_wipe_wins": "5.25-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Tail longshot bid at 13c Yes (event consensus peak 97c Yes across 30 market(s)); verified two-sided book.",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXWTI-26NOV1614",
+          "candidate_count": 30,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
     "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE": null
   },
-  "top_25_uncrowded_candidates": []
+  "top_25_uncrowded_candidates": [
+    {
+      "ticker": "KXWTI-26NOV1614-T90.99",
+      "event_ticker": "KXWTI-26NOV1614",
+      "series_ticker": "KXWTI",
+      "title": "Will the WTI crude oil settlement price be above 90.99 USD/Bbl on Nov 16, 2026?",
+      "subtitle": "Above $90.99",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxwti-26nov1614",
+      "orthogonality_bucket": "BUCKET_B_MACRO_ENERGY_COMMODITY",
+      "hours_to_expiration": 73.12,
+      "expiration_iso": "2026-11-16T19:30:00Z",
+      "quality_score": 24.33,
+      "oracle_edge_proof": "Tail longshot bid at 13c Yes (event consensus peak 97c Yes across 30 market(s)); verified two-sided book.",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 13,
+        "best_no_bid_cents": 83,
+        "implied_yes_ask_cents": 17,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 84,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 4,
+        "top_no_queue_depth": 1500,
+        "total_no_bid_qty": 23153,
+        "total_yes_bid_qty": 2088,
+        "total_book_depth_contracts": 25241,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": 0.8346,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0094,
+        "taker_fee_saved_cents_per_contract": 0.94,
+        "total_taker_fee_saved_on_position_dollars": 0.56,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 60,
+        "liquidity_cap_35pct_book_contracts": 8834,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 60,
+        "total_order_exposure_dollars": 50.4,
+        "max_profit_if_no_wins_dollars": 9.6,
+        "net_win_return_pct": 19.05,
+        "payoff_asymmetry_losses_to_wipe_wins": "5.25-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Tail longshot bid at 13c Yes (event consensus peak 97c Yes across 30 market(s)); verified two-sided book.",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXWTI-26NOV1614",
+          "candidate_count": 30,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    },
+    {
+      "ticker": "KXWTI-26NOV1614-T92.49",
+      "event_ticker": "KXWTI-26NOV1614",
+      "series_ticker": "KXWTI",
+      "title": "Will the WTI crude oil settlement price be above 92.49 USD/Bbl on Nov 16, 2026?",
+      "subtitle": "Above $92.49",
+      "category": "",
+      "kalshi_market_url": "https://kalshi.com/markets/kxwti-26nov1614",
+      "orthogonality_bucket": "BUCKET_B_MACRO_ENERGY_COMMODITY",
+      "hours_to_expiration": 73.12,
+      "expiration_iso": "2026-11-16T19:30:00Z",
+      "quality_score": 9.93,
+      "oracle_edge_proof": "Tail longshot bid at 4c Yes (event consensus peak 97c Yes across 30 market(s)); verified two-sided book.",
+      "orderbook_pricing": {
+        "best_yes_bid_cents": 4,
+        "best_no_bid_cents": 92,
+        "implied_yes_ask_cents": 8,
+        "last_price_yes_cents": 0,
+        "recommended_maker_no_bid_cents": 93,
+        "price_improvement_cents": 1
+      },
+      "microstructure_metrics": {
+        "spread_cents": 4,
+        "top_no_queue_depth": 1500,
+        "total_no_bid_qty": 13060,
+        "total_yes_bid_qty": 1520,
+        "total_book_depth_contracts": 14580,
+        "volume_24h_contracts": 0.0,
+        "open_interest_contracts": 0.0,
+        "obi": 0.7915,
+        "mutually_exclusive_event": false,
+        "event_overround": 1.0,
+        "taker_fee_saved_dollars_per_contract": 0.0046,
+        "taker_fee_saved_cents_per_contract": 0.46,
+        "total_taker_fee_saved_on_position_dollars": 0.25,
+        "high_adverse_selection_risk": false
+      },
+      "position_sizing_5pct_cap": {
+        "total_bankroll_dollars": 1016.18,
+        "max_dollar_risk_5pct": 50.81,
+        "uncapped_5pct_contracts": 54,
+        "liquidity_cap_35pct_book_contracts": 5103,
+        "liquidity_cap_applied": false,
+        "contracts_to_bid": 54,
+        "total_order_exposure_dollars": 50.22,
+        "max_profit_if_no_wins_dollars": 3.78,
+        "net_win_return_pct": 7.53,
+        "payoff_asymmetry_losses_to_wipe_wins": "13.29-to-1"
+      },
+      "primary_truth_oracle": {
+        "oracle_edge_proof": "Tail longshot bid at 4c Yes (event consensus peak 97c Yes across 30 market(s)); verified two-sided book.",
+        "weather_station": null,
+        "event_field_inflation": {
+          "event_ticker": "KXWTI-26NOV1614",
+          "candidate_count": 30,
+          "mutually_exclusive": false,
+          "event_overround": 1.0,
+          "field_inflation_flagged": false
+        }
+      }
+    }
+  ]
 }
