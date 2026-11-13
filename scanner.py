@@ -1,30 +1,27 @@
 #!/usr/bin/env python3
 """
-Patroclus Kalshi Longshot-Bias Underwriting Scanner (v3.0)
+Patroclus Kalshi Longshot-Bias Underwriting Scanner (v3.1)
 Repository: https://github.com/chrisdonreynolds/patroclus
 
-All 5 Production Fixes in v3.0:
-1. Kalshi API v2 Wire-Format & Fixed-Point Schema Compatibility:
-   - Passes repeated `?tickers=A&tickers=B` list params (`params={"tickers": chunk}`)
-     instead of comma-joined strings on `GET /markets/orderbooks`.
-   - Unwraps `orderbook_fp` (`yes_dollars` / `no_dollars` fixed-point strings) as well
-     as legacy `orderbook` arrays, and prioritizes `*_dollars` / `*_fp` fields when
-     legacy integer fields return `0` or `None`.
-2. Event-First Non-Parlay Discovery (`GET /events?status=open&with_nested_markets=true`):
-   - Automatically excludes `KXMVE*` multivariate combo parlays on Kalshi's server,
-     captures event-level `category` and `mutually_exclusive` flags, and excludes Sports.
-3. Explicit Strike-vs-Oracle Tail Enforcement:
-   - Compares `strike_type` (`greater`, `less`, `between`), `floor_strike`, and `cap_strike`
-     directly against date-matched NWS hourly forecast highs/lows (`>= 3.5F` buffer +
-     Midnight Clocks Trap check on same-day markets) and AAA national regular gas averages,
-     plus a Distribution Tail Gate rejecting modal center brackets on multi-slice ladders.
-4. Horizon & Schedule Alignment (`8h` to `168h` Expiration Window):
-   - Captures next-day weather (`~38h`) alongside weekly Macro/Gas/TSA/Entertainment
-     contracts (`96h-168h`) with a capital-velocity score bonus for faster settlement.
-5. Bankroll Book-Depth Participation Cap (for $1,000+ Live Balances):
-   - Requires minimum market activity (`volume_24h`, `open_interest`, and resting book depth)
-     and caps any single Maker order at `<= 35%` of visible orderbook depth (up to the 5%
-     bankroll cap) so $50+ orders never become the entire resting market.
+Upgrades in v3.1:
+1. Window-Targeted Non-Parlay Market Discovery (`mve_filter=exclude` + `min_close_ts` + `max_close_ts`):
+   - Queries `GET /markets` with `mve_filter=exclude`, `min_close_ts`, and `max_close_ts`
+     (omitting `status` on the query per Kalshi's compatibility table to avoid HTTP 400,
+     then filtering `status in ("open", "active")` in Python) so pagination pulls 100%
+     7-day horizon markets instead of 2027-2028 contracts.
+   - Enriches surviving candidate events via `GET /events/{event_ticker}` so `category`
+     and `mutually_exclusive` are exact on every candidate.
+2. Expanded 16-City NWS Weather Coverage + `2.5F` Shoulder Buffer (`BUCKET_A`):
+   - Lowers `WEATHER_SAFE_BUFFER_F` from `3.5F` to `2.5F` (still clearing the +-1.8F
+     METAR whole-degree Celsius rounding step while unlocking the liquid +3F shoulder
+     bracket where 84c-95c No orders actually trade) across 16 US stations.
+3. Retail-Calibrated Bucket C Gates & Strict `mutually_exclusive` Modal Filter:
+   - Restricts the modal-center distribution filter strictly to `mutually_exclusive == True`
+     events so independent Bucket C checklists (mentions, Rotten Tomatoes, launches, bills)
+     are never falsely disqualified when sibling longshots cluster around 8c-14c Yes.
+   - Applies bucket-specific spread & depth floors (Bucket A: <=18c spread, >=10 book depth;
+     Bucket B: <=15c spread, >=15 book depth; Bucket C: <=22c spread, >=8 book depth) while
+     enforcing the 35% visible book-depth cap across all buckets.
 """
 
 import base64
@@ -47,7 +44,7 @@ try:
 except Exception:
     CRYPTO_AVAILABLE = False
 
-USER_AGENT = "PatroclusKalshiScanner/3.0 (christopherdonreynolds@gmail.com)"
+USER_AGENT = "PatroclusKalshiScanner/3.1 (christopherdonreynolds@gmail.com)"
 KALSHI_BASE_URL = "https://external-api.kalshi.com/trade-api/v2"
 KALSHI_EVENTS_URL = f"{KALSHI_BASE_URL}/events"
 KALSHI_MARKETS_URL = f"{KALSHI_BASE_URL}/markets"
@@ -62,23 +59,37 @@ DAILY_TOTAL_RISK_CAP_PCT = 0.15
 MIN_HOURS_TO_EXPIRATION = 8.0
 MAX_HOURS_TO_EXPIRATION = 168.0
 
-# Two-Sided Longshot Microstructure Gates (Zero 99c/1c or 0-bid ghost books)
+# Two-Sided Longshot Quote Bounds (Zero 99c/1c or 0-bid ghost books)
 MIN_YES_BID_CENTS = 2          # Real resting Yes buyers >= 2c
 MAX_YES_BID_CENTS = 17         # Longshot ceiling on Yes bid
-MIN_NO_BID_CENTS = 81          # Ensures recommended_maker_no_bid_cents >= 82c
-MAX_NO_BID_CENTS = 95          # Ensures recommended_maker_no_bid_cents <= 96c (never 99c/1c)
+MIN_NO_BID_CENTS = 80          # Allows wider retail spreads on Bucket C when Maker improves bid
+MAX_NO_BID_CENTS = 95          # Ensures Maker No bid (+1c) stays <= 96c (never 99c/1c)
 MIN_SPREAD_CENTS = 2           # Minimum 2c spread so +1c Maker improvement never crosses book
-MAX_SPREAD_CENTS = 15          # Reject hollow/abandoned books wider than 15c
 MAX_TOP_NO_QUEUE_DEPTH = 2000  # Avoid congested institutional walls
-MAX_OBI_THRESHOLD = 0.85       # Order Book Imbalance safety cap
-
-# Liquidity & Book-Share Protection for $1,000+ Bankrolls
-MIN_TOTAL_BOOK_CONTRACTS = 15
-MIN_ACTIVITY_CONTRACTS = 20    # Minimum open_interest or volume_24h
+MAX_OBI_THRESHOLD = 0.88       # Order Book Imbalance safety cap
 MAX_BOOK_DEPTH_SHARE = 0.35    # Never bid more than 35% of visible resting book depth
 
-# Weather & AAA Gas Oracle Buffers
-WEATHER_SAFE_BUFFER_F = 3.5    # Clears +-1.8F METAR whole-degree Celsius rounding trap
+# Bucket-Specific Microstructure Gates (Institutional Macro vs Retail Weather/Bucket C)
+BUCKET_GATES: Dict[str, Dict[str, int]] = {
+    "BUCKET_A_WEATHER_ATMOSPHERIC": {
+        "max_spread_cents": 18,
+        "min_book_contracts": 10,
+        "min_activity_contracts": 12,
+    },
+    "BUCKET_B_MACRO_ENERGY_COMMODITY": {
+        "max_spread_cents": 15,
+        "min_book_contracts": 15,
+        "min_activity_contracts": 20,
+    },
+    "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE": {
+        "max_spread_cents": 22,
+        "min_book_contracts": 8,
+        "min_activity_contracts": 10,
+    },
+}
+
+# Weather Oracle Buffer: 2.5F clears +-1.8F METAR C-to-F rounding while catching +3F brackets
+WEATHER_SAFE_BUFFER_F = 2.5
 
 TARGET_SERIES_BY_BUCKET: Dict[str, List[str]] = {
     "BUCKET_A_WEATHER_ATMOSPHERIC": [
@@ -90,6 +101,14 @@ TARGET_SERIES_BY_BUCKET: Dict[str, List[str]] = {
         "KXHIGHMIA",
         "KXHIGHAUS",
         "KXHIGHPHIL",
+        "KXHIGHSFO",
+        "KXHIGHDAL",
+        "KXHIGHBOS",
+        "KXHIGHATL",
+        "KXHIGHDCA",
+        "KXHIGHSEA",
+        "KXHIGHPHX",
+        "KXHIGHLAS",
         "KXLOWTNYC",
         "KXLOWTCHI",
     ],
@@ -115,12 +134,15 @@ TARGET_SERIES_BY_BUCKET: Dict[str, List[str]] = {
         "KXSEC",
         "KXEO",
         "KXBILL",
+        "KXMENTION",
+        "KXBOXOFFICE",
     ],
 }
 
 EXCLUDED_TICKER_PREFIXES = (
     "KXMVE",
     "KXMVECROSSCATEGORY",
+    "KXRFQ",
     "KXPARLAY",
     "KXCOMBO",
     "KXNBA",
@@ -215,6 +237,78 @@ NWS_STATIONS: Dict[str, Dict[str, Any]] = {
         "tz": "America/New_York",
         "high_prefixes": ["KXHIGHPHIL"],
         "low_prefixes": ["KXLOWTPHIL"],
+    },
+    "KSFO": {
+        "station_id": "KSFO",
+        "city": "San Francisco International",
+        "lat": 37.6196,
+        "lon": -122.3656,
+        "tz": "America/Los_Angeles",
+        "high_prefixes": ["KXHIGHSFO", "KXHIGHSF"],
+        "low_prefixes": ["KXLOWTSFO"],
+    },
+    "KDFW": {
+        "station_id": "KDFW",
+        "city": "Dallas Fort Worth",
+        "lat": 32.8998,
+        "lon": -97.0403,
+        "tz": "America/Chicago",
+        "high_prefixes": ["KXHIGHDAL", "KXHIGHDW"],
+        "low_prefixes": ["KXLOWTDAL"],
+    },
+    "KBOS": {
+        "station_id": "KBOS",
+        "city": "Boston Logan",
+        "lat": 42.3606,
+        "lon": -71.0097,
+        "tz": "America/New_York",
+        "high_prefixes": ["KXHIGHBOS"],
+        "low_prefixes": ["KXLOWTBOS"],
+    },
+    "KATL": {
+        "station_id": "KATL",
+        "city": "Atlanta Hartsfield-Jackson",
+        "lat": 33.6407,
+        "lon": -84.4277,
+        "tz": "America/New_York",
+        "high_prefixes": ["KXHIGHATL"],
+        "low_prefixes": ["KXLOWTATL"],
+    },
+    "KDCA": {
+        "station_id": "KDCA",
+        "city": "Washington Reagan National",
+        "lat": 38.8512,
+        "lon": -77.0402,
+        "tz": "America/New_York",
+        "high_prefixes": ["KXHIGHDCA", "KXHIGHDC"],
+        "low_prefixes": ["KXLOWTDCA"],
+    },
+    "KSEA": {
+        "station_id": "KSEA",
+        "city": "Seattle-Tacoma",
+        "lat": 47.4502,
+        "lon": -122.3088,
+        "tz": "America/Los_Angeles",
+        "high_prefixes": ["KXHIGHSEA"],
+        "low_prefixes": ["KXLOWTSEA"],
+    },
+    "KPHX": {
+        "station_id": "KPHX",
+        "city": "Phoenix Sky Harbor",
+        "lat": 33.4373,
+        "lon": -112.0078,
+        "tz": "America/Phoenix",
+        "high_prefixes": ["KXHIGHPHX"],
+        "low_prefixes": ["KXLOWTPHX"],
+    },
+    "KLAS": {
+        "station_id": "KLAS",
+        "city": "Las Vegas Reid",
+        "lat": 36.0840,
+        "lon": -115.1537,
+        "tz": "America/Los_Angeles",
+        "high_prefixes": ["KXHIGHLAS", "KXHIGHLV"],
+        "low_prefixes": ["KXLOWTLAS"],
     },
 }
 
@@ -359,11 +453,11 @@ def fetch_weather_oracles(now_utc: dt.datetime) -> Dict[str, Any]:
         daily_highs_f: Dict[str, float] = {}
         daily_lows_f: Dict[str, float] = {}
 
-        p_resp = safe_get(points_url, timeout=10)
+        p_resp = safe_get(points_url, timeout=8)
         if p_resp is not None and p_resp.status_code == 200:
             hourly_url = p_resp.json().get("properties", {}).get("forecastHourly")
             if hourly_url:
-                h_resp = safe_get(hourly_url, timeout=10)
+                h_resp = safe_get(hourly_url, timeout=8)
                 if h_resp is not None and h_resp.status_code == 200:
                     periods = h_resp.json().get("properties", {}).get("periods", [])
                     for p in periods[:96]:
@@ -389,7 +483,7 @@ def fetch_weather_oracles(now_utc: dt.datetime) -> Dict[str, Any]:
         latest_c: Optional[float] = None
         latest_f: Optional[float] = None
 
-        o_resp = safe_get(obs_url, timeout=10)
+        o_resp = safe_get(obs_url, timeout=8)
         if o_resp is not None and o_resp.status_code == 200:
             features = o_resp.json().get("features", [])
             for idx, feat in enumerate(features):
@@ -446,7 +540,7 @@ def fetch_weather_oracles(now_utc: dt.datetime) -> Dict[str, Any]:
         }
 
     return {
-        "vertical": "Daily High/Low Weather Station Grids (NWS + METAR)",
+        "vertical": "Daily High/Low Weather Station Grids (NWS + METAR, 16 Cities)",
         "source_urls": ["https://api.weather.gov"],
         "stations": stations_out,
     }
@@ -457,7 +551,7 @@ def fetch_energy_oracles() -> Dict[str, Any]:
     current_avg = None
     resp = safe_get(
         aaa_url,
-        headers={"User-Agent": "Mozilla/5.0 (compatible; PatroclusScanner/3.0)"},
+        headers={"User-Agent": "Mozilla/5.0 (compatible; PatroclusScanner/3.1)"},
         timeout=12,
     )
     if resp is not None and resp.status_code == 200:
@@ -506,15 +600,26 @@ def fetch_space_and_procedural_oracles() -> Dict[str, Any]:
 
 
 def is_excluded_market(market: Dict[str, Any], event_category: str = "") -> bool:
+    status = (market.get("status") or "").strip().lower()
+    if status and status not in ("open", "active"):
+        return True
+
     ticker = (market.get("ticker") or "").upper()
     event_ticker = (market.get("event_ticker") or "").upper()
-    series_ticker = (market.get("series_ticker") or market.get("_series_ticker") or "").upper()
+    series_ticker = (
+        market.get("series_ticker") or market.get("_series_ticker") or ""
+    ).upper()
     title = (market.get("title") or "").lower()
-    cat = (event_category or market.get("_event_category") or market.get("category") or "").strip().lower()
+    cat = (
+        event_category
+        or market.get("_event_category")
+        or market.get("category")
+        or ""
+    ).strip().lower()
 
     if cat in EXCLUDED_CATEGORIES:
         return True
-    if market.get("mve_collection_ticker"):
+    if market.get("mve_collection_ticker") or market.get("mve_selected_legs"):
         return True
     for pref in EXCLUDED_TICKER_PREFIXES:
         if (
@@ -539,7 +644,9 @@ def is_excluded_market(market: Dict[str, Any], event_category: str = "") -> bool
 def classify_orthogonality_bucket(market: Dict[str, Any]) -> str:
     ticker = (market.get("ticker") or "").upper()
     event_ticker = (market.get("event_ticker") or "").upper()
-    series_ticker = (market.get("_series_ticker") or market.get("series_ticker") or "").upper()
+    series_ticker = (
+        market.get("_series_ticker") or market.get("series_ticker") or ""
+    ).upper()
     title = (market.get("title") or "").lower()
     cat = (market.get("_event_category") or market.get("category") or "").lower()
 
@@ -582,10 +689,6 @@ def classify_orthogonality_bucket(market: Dict[str, Any]) -> str:
 
 
 def extract_cents(market: Dict[str, Any], cents_key: str, dollars_key: str) -> int:
-    """
-    Reads Kalshi v2 fixed-point dollar strings (`*_dollars`, e.g. `"0.0800"`) FIRST
-    so a legacy `0` on `yes_bid` never masks a live v2 dollar quote.
-    """
     d_val = market.get(dollars_key)
     if d_val is not None and str(d_val).strip() != "":
         try:
@@ -628,6 +731,7 @@ def parse_expiration_hours(
     exp_str = (
         market.get("expected_expiration_time")
         or market.get("close_time")
+        or market.get("latest_expiration_time")
         or market.get("expiration_time")
     )
     if not exp_str:
@@ -640,25 +744,61 @@ def parse_expiration_hours(
 
 
 def harvest_kalshi_markets(
-    now_utc: dt.datetime, max_event_pages: int = 20
-) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    now_utc: dt.datetime,
+    max_market_pages: int = 12,
+    max_event_pages: int = 12,
+) -> Tuple[List[Dict[str, Any]], Dict[str, Dict[str, Any]], Dict[str, Any]]:
     """
-    Primary discovery via `GET /events?status=open&with_nested_markets=true`
-    (which natively excludes KXMVE multivariate parlays on Kalshi's backend),
-    supplemented by direct series queries across Buckets A, B, and C.
+    3-Pass Hybrid Discovery:
+    - Pass 1 (`GET /markets` with `mve_filter=exclude`, `min_close_ts`, `max_close_ts`,
+      `limit=1000`, `status` omitted per Kalshi API rules): pulls 100% of non-parlay
+      markets closing inside the 7-day window without wasting pages on 2027-2028 markets.
+    - Pass 2 (`GET /events?status=open&with_nested_markets=true&min_close_ts=...`):
+      captures event-level `category` and `mutually_exclusive` flags and catches events
+      whose `expected_expiration_time` falls in-window even if `close_time` is later.
+    - Pass 3 (Explicit Series Sweep): directly polls core Weather, Macro/Gas, and Bucket C series.
     """
-    seen_tickers = set()
-    harvested: List[Dict[str, Any]] = []
-    events_scanned = 0
+    markets_by_ticker: Dict[str, Dict[str, Any]] = {}
+    event_meta_map: Dict[str, Dict[str, Any]] = {}
     pages_fetched = 0
-    min_close_ts = int(
-        (now_utc + dt.timedelta(hours=MIN_HOURS_TO_EXPIRATION)).timestamp()
-    )
+    events_scanned = 0
 
-    # Pass 1: Event-level discovery with nested markets (zero KXMVE parlay noise)
+    min_close_ts = int((now_utc + dt.timedelta(hours=6)).timestamp())
+    max_close_ts = int((now_utc + dt.timedelta(hours=192)).timestamp())
+
+    # Pass 1: Window-bounded non-parlay market sweep (`mve_filter=exclude` + `min_close_ts` + `max_close_ts`)
+    cursor = None
+    for _ in range(max_market_pages):
+        params: Dict[str, Any] = {
+            "min_close_ts": min_close_ts,
+            "max_close_ts": max_close_ts,
+            "mve_filter": "exclude",
+            "limit": 1000,
+        }
+        if cursor:
+            params["cursor"] = cursor
+        resp = safe_get(KALSHI_MARKETS_URL, params=params, timeout=18)
+        if resp is None or resp.status_code != 200:
+            break
+        pages_fetched += 1
+        data = resp.json()
+        page_markets = data.get("markets") or []
+        if not page_markets:
+            break
+
+        for m in page_markets:
+            tkr = m.get("ticker")
+            if tkr and not is_excluded_market(m):
+                markets_by_ticker[tkr] = m
+
+        cursor = data.get("cursor")
+        if not cursor:
+            break
+
+    # Pass 2: Event-level enrichment & nested-market capture
     cursor = None
     for _ in range(max_event_pages):
-        params: Dict[str, Any] = {
+        params = {
             "status": "open",
             "with_nested_markets": "true",
             "min_close_ts": min_close_ts,
@@ -671,67 +811,119 @@ def harvest_kalshi_markets(
             break
         pages_fetched += 1
         data = resp.json()
-        events = data.get("events", [])
+        events = data.get("events") or []
         if not events:
             break
 
         for ev in events:
             events_scanned += 1
-            ev_cat = ev.get("category") or ""
-            ev_title = ev.get("title") or ""
-            ev_series = ev.get("series_ticker") or ""
-            mut_excl = bool(ev.get("mutually_exclusive", False))
-            nested = ev.get("markets") or []
+            ev_tkr = ev.get("event_ticker") or ""
+            ev_meta = {
+                "category": ev.get("category") or "",
+                "title": ev.get("title") or "",
+                "series_ticker": ev.get("series_ticker") or "",
+                "mutually_exclusive": bool(ev.get("mutually_exclusive", False)),
+            }
+            if ev_tkr:
+                event_meta_map[ev_tkr] = ev_meta
 
-            for m in nested:
+            for m in ev.get("markets") or []:
                 tkr = m.get("ticker")
-                if not tkr or tkr in seen_tickers:
+                if not tkr:
                     continue
-                m["_event_category"] = ev_cat
-                m["_event_title"] = ev_title
-                m["_series_ticker"] = ev_series
-                m["_mutually_exclusive"] = mut_excl
-                if not is_excluded_market(m, ev_cat):
-                    seen_tickers.add(tkr)
-                    harvested.append(m)
+                m["_event_category"] = ev_meta["category"]
+                m["_event_title"] = ev_meta["title"]
+                m["_series_ticker"] = ev_meta["series_ticker"]
+                m["_mutually_exclusive"] = ev_meta["mutually_exclusive"]
+                if is_excluded_market(m, ev_meta["category"]):
+                    markets_by_ticker.pop(tkr, None)
+                else:
+                    markets_by_ticker[tkr] = m
 
         cursor = data.get("cursor")
         if not cursor:
             break
 
-    # Pass 2: Explicit series sweep so core Weather/Gas/Entertainment series are never missed
-    for bucket, series_list in TARGET_SERIES_BY_BUCKET.items():
+    # Pass 3: Explicit series sweep across Buckets A, B, and C
+    for _, series_list in TARGET_SERIES_BY_BUCKET.items():
         for s_tkr in series_list:
             resp = safe_get(
                 KALSHI_MARKETS_URL,
                 params={"status": "open", "series_ticker": s_tkr, "limit": 200},
-                timeout=12,
+                timeout=10,
             )
             if resp is not None and resp.status_code == 200:
                 pages_fetched += 1
-                for m in resp.json().get("markets", []):
+                for m in resp.json().get("markets") or []:
                     tkr = m.get("ticker")
-                    if tkr and tkr not in seen_tickers:
+                    if tkr and tkr not in markets_by_ticker:
                         m.setdefault("_series_ticker", s_tkr)
                         if not is_excluded_market(m):
-                            seen_tickers.add(tkr)
-                            harvested.append(m)
+                            markets_by_ticker[tkr] = m
+
+    # Apply any known event metadata to Pass 1 & Pass 3 markets
+    final_markets: List[Dict[str, Any]] = []
+    for tkr, m in markets_by_ticker.items():
+        evt = m.get("event_ticker") or ""
+        if evt in event_meta_map:
+            meta = event_meta_map[evt]
+            m.setdefault("_event_category", meta["category"])
+            m.setdefault("_event_title", meta["title"])
+            m.setdefault("_series_ticker", meta["series_ticker"])
+            m["_mutually_exclusive"] = meta["mutually_exclusive"]
+        if not is_excluded_market(m):
+            final_markets.append(m)
 
     stats = {
         "pages_fetched": pages_fetched,
         "events_scanned": events_scanned,
-        "total_open_markets_scanned": len(harvested),
+        "total_open_markets_scanned": len(final_markets),
     }
-    return harvested, stats
+    return final_markets, event_meta_map, stats
+
+
+def enrich_missing_event_metadata(
+    preliminary_markets: List[Dict[str, Any]],
+    event_meta_map: Dict[str, Dict[str, Any]],
+    max_lookups: int = 40,
+) -> None:
+    """
+    Fetches `GET /events/{event_ticker}` for any preliminary candidate whose event
+    metadata wasn't seen in Pass 2, ensuring `category` (to block Sports) and
+    `mutually_exclusive` (for the modal gate) are exact on every candidate.
+    """
+    missing_events: List[str] = []
+    for m in preliminary_markets:
+        evt = m.get("event_ticker") or ""
+        if evt and evt not in event_meta_map and evt not in missing_events:
+            missing_events.append(evt)
+
+    for evt in missing_events[:max_lookups]:
+        resp = safe_get(f"{KALSHI_EVENTS_URL}/{evt}", timeout=8)
+        if resp is not None and resp.status_code == 200:
+            ev = resp.json().get("event") or resp.json()
+            if isinstance(ev, dict):
+                event_meta_map[evt] = {
+                    "category": ev.get("category") or "",
+                    "title": ev.get("title") or "",
+                    "series_ticker": ev.get("series_ticker") or "",
+                    "mutually_exclusive": bool(ev.get("mutually_exclusive", False)),
+                }
+        time.sleep(0.02)
+
+    for m in preliminary_markets:
+        evt = m.get("event_ticker") or ""
+        if evt in event_meta_map:
+            meta = event_meta_map[evt]
+            m["_event_category"] = meta["category"]
+            m["_event_title"] = meta["title"]
+            m["_series_ticker"] = meta["series_ticker"] or m.get("_series_ticker", "")
+            m["_mutually_exclusive"] = meta["mutually_exclusive"]
 
 
 def parse_orderbook_levels(
     raw_levels: Any, is_dollars: bool = False
 ) -> List[Tuple[int, float]]:
-    """
-    Parses Kalshi orderbook bid ladders (`yes_dollars`/`no_dollars` or legacy `yes`/`no`)
-    and sorts descending so `levels[0]` is guaranteed to be the highest (best) bid.
-    """
     parsed: List[Tuple[int, float]] = []
     if not isinstance(raw_levels, list):
         return parsed
@@ -756,7 +948,9 @@ def parse_orderbook_levels(
     return parsed
 
 
-def extract_orderbook_from_body(ob_wrapper: Dict[str, Any]) -> Dict[str, List[Tuple[int, float]]]:
+def extract_orderbook_from_body(
+    ob_wrapper: Dict[str, Any],
+) -> Dict[str, List[Tuple[int, float]]]:
     ob_body = (
         ob_wrapper.get("orderbook_fp")
         or ob_wrapper.get("orderbook")
@@ -781,10 +975,6 @@ def extract_orderbook_from_body(ob_wrapper: Dict[str, Any]) -> Dict[str, List[Tu
 def batch_fetch_orderbooks(
     tickers: List[str],
 ) -> Dict[str, Dict[str, List[Tuple[int, float]]]]:
-    """
-    Uses repeated query parameters (`params={"tickers": chunk}`) as required by
-    Kalshi's v2 `GET /markets/orderbooks` specification, with single-market fallback.
-    """
     orderbooks: Dict[str, Dict[str, List[Tuple[int, float]]]] = {}
     unique_tickers = list(dict.fromkeys([t for t in tickers if t]))
 
@@ -819,9 +1009,6 @@ def batch_fetch_orderbooks(
 
 
 def parse_target_date_from_ticker(ticker: str) -> Optional[str]:
-    """
-    Extracts `YYYY-MM-DD` from Kalshi date tokens like `-26NOV14` or `-2026NOV14`.
-    """
     m = re.search(
         r"-(\d{2,4})(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(\d{2})\b",
         ticker.upper(),
@@ -851,15 +1038,13 @@ def verify_oracle_tail_edge(
     market: Dict[str, Any],
     bucket: str,
     best_yes_bid: int,
+    spread_cents: int,
+    mutually_exclusive: bool,
     event_max_yes_bid: int,
     event_market_count: int,
     weather_oracles: Dict[str, Any],
     energy_oracles: Dict[str, Any],
 ) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
-    """
-    Ensures we NEVER bet 'No' on a center/consensus slice and enforces explicit
-    NWS temperature and AAA gas strike distance buffers when numeric strikes exist.
-    """
     tkr = (market.get("ticker") or "").upper()
     evt = (market.get("event_ticker") or "").upper()
     strike_type = (market.get("strike_type") or "").lower()
@@ -867,7 +1052,7 @@ def verify_oracle_tail_edge(
     cap_strike = parse_float_or_none(market.get("cap_strike"))
     hrs = float(market.get("_hours_to_expiration") or 24.0)
 
-    # 1. Weather Station Strike-vs-Forecast Check
+    # 1. Weather Station Strike-vs-Forecast Check (`2.5F` Shoulder Buffer across 16 Stations)
     if bucket == "BUCKET_A_WEATHER_ATMOSPHERIC":
         matched_station = None
         is_low_market = False
@@ -924,16 +1109,16 @@ def verify_oracle_tail_edge(
                 if strike_type == "greater" and floor_strike is not None:
                     diff = round(floor_strike - ref_temp, 1)
                     if diff < WEATHER_SAFE_BUFFER_F:
-                        return False, "Strike too close to NWS forecast", matched_station
+                        return False, "Strike within 2.5F of NWS forecast", matched_station
                     return (
                         True,
-                        f"NWS {st_id} forecast {lbl} ({target_date or 'upcoming'}) is {ref_temp}F; strike above {floor_strike}F sits +{diff}F into the upper tail (clears METAR C-to-F rounding).",
+                        f"NWS {st_id} forecast {lbl} ({target_date or 'upcoming'}) is {ref_temp}F; strike above {floor_strike}F sits +{diff}F into the upper tail (clears +-1.8F METAR rounding).",
                         matched_station,
                     )
                 if strike_type == "less" and cap_strike is not None:
                     diff = round(ref_temp - cap_strike, 1)
                     if diff < WEATHER_SAFE_BUFFER_F:
-                        return False, "Strike too close to NWS forecast", matched_station
+                        return False, "Strike within 2.5F of NWS forecast", matched_station
                     return (
                         True,
                         f"NWS {st_id} forecast {lbl} ({target_date or 'upcoming'}) is {ref_temp}F; strike below {cap_strike}F sits -{diff}F into the lower tail.",
@@ -960,7 +1145,7 @@ def verify_oracle_tail_edge(
                         )
                     return (
                         False,
-                        "Disqualified: 2F weather bracket overlaps NWS forecast center",
+                        "Disqualified: Weather bracket overlaps or sits within 2.5F of NWS forecast",
                         matched_station,
                     )
 
@@ -1005,37 +1190,55 @@ def verify_oracle_tail_edge(
                     )
                 return False, "Gas bracket overlaps current AAA average", None
 
-    # 3. Universal Distribution Tail Gate for Multi-Slice Ladders
-    # Prevents betting 'No' on the consensus/modal slice when every slice in a 10-slice event is <=17c
-    if event_market_count >= 4 and event_max_yes_bid > 0:
+    # 3. Modal Consensus Filter ONLY on Mutually Exclusive Multi-Slice Events
+    # Independent Bucket C checklists (`mutually_exclusive == False`) are NOT penalized when all options sit at 8c-15c
+    if mutually_exclusive and event_market_count >= 4 and event_max_yes_bid > 0:
         if best_yes_bid >= max(event_max_yes_bid - 2, int(event_max_yes_bid * 0.75)):
             return (
                 False,
-                "Disqualified: Bracket is near the event's modal consensus center",
+                "Disqualified: Mutually exclusive slice is near the event's modal consensus center",
                 None,
             )
 
+    if mutually_exclusive:
+        return (
+            True,
+            f"Tail longshot bid at {best_yes_bid}c Yes (mutually exclusive event modal peak {event_max_yes_bid}c Yes across {event_market_count} slices); {spread_cents}c spread.",
+            None,
+        )
     return (
         True,
-        f"Tail longshot bid at {best_yes_bid}c Yes (event consensus peak {event_max_yes_bid}c Yes across {event_market_count} market(s)); verified two-sided book.",
+        f"Independent longshot bid at {best_yes_bid}c Yes ({100 - best_yes_bid - spread_cents}c No bid, {spread_cents}c two-sided spread across {event_market_count} event market(s)).",
         None,
     )
 
 
 def evaluate_candidates(
     markets: List[Dict[str, Any]],
+    event_meta_map: Dict[str, Dict[str, Any]],
     bankroll_info: Dict[str, Any],
     weather_oracles: Dict[str, Any],
     energy_oracles: Dict[str, Any],
     now_utc: dt.datetime,
-) -> Tuple[List[Dict[str, Any]], Dict[str, int]]:
-    funnel = {
+) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    buckets = list(BUCKET_GATES.keys())
+    bucket_funnel = {
+        b: {
+            "in_window": 0,
+            "prelim_quote": 0,
+            "spread_and_depth": 0,
+            "oracle_tail": 0,
+        }
+        for b in buckets
+    }
+    funnel: Dict[str, Any] = {
         "markets_scanned": len(markets),
         "in_8h_168h_window": 0,
         "passed_prelim_quote_gate": 0,
         "orderbooks_non_empty": 0,
         "passed_spread_and_depth_gate": 0,
         "passed_oracle_tail_gate": 0,
+        "per_bucket_stages": bucket_funnel,
     }
 
     in_window: List[Dict[str, Any]] = []
@@ -1049,6 +1252,8 @@ def evaluate_candidates(
             continue
         funnel["in_8h_168h_window"] += 1
         m["_hours_to_expiration"] = hrs
+        b_init = classify_orthogonality_bucket(m)
+        bucket_funnel[b_init]["in_window"] += 1
 
         evt = m.get("event_ticker") or m.get("ticker") or ""
         yes_bid = extract_cents(m, "yes_bid", "yes_bid_dollars")
@@ -1065,18 +1270,24 @@ def evaluate_candidates(
 
         in_window.append(m)
 
-    # Pre-filter candidates near the target longshot window before fetching full depth
+    # Pre-filter candidates near the longshot quote window (allowing wide Bucket C No bids down to 76c)
     preliminary: List[Dict[str, Any]] = []
     for m in in_window:
         yes_bid = extract_cents(m, "yes_bid", "yes_bid_dollars")
         no_bid = extract_cents(m, "no_bid", "no_bid_dollars")
-        # Allow a 1c buffer on pre-filter in case top-of-book moved slightly
         if (MIN_YES_BID_CENTS - 1) <= yes_bid <= (MAX_YES_BID_CENTS + 1) and (
-            MIN_NO_BID_CENTS - 1
-        ) <= no_bid <= (MAX_NO_BID_CENTS + 1):
+            75 <= no_bid <= (MAX_NO_BID_CENTS + 1)
+        ):
             preliminary.append(m)
 
+    # Enrich exact event category & mutually_exclusive on any Pass 1 markets before final gating
+    enrich_missing_event_metadata(preliminary, event_meta_map)
+    preliminary = [m for m in preliminary if not is_excluded_market(m)]
+
     funnel["passed_prelim_quote_gate"] = len(preliminary)
+    for m in preliminary:
+        bucket_funnel[classify_orthogonality_bucket(m)]["prelim_quote"] += 1
+
     orderbooks = batch_fetch_orderbooks([m["ticker"] for m in preliminary])
 
     candidates: List[Dict[str, Any]] = []
@@ -1086,6 +1297,9 @@ def evaluate_candidates(
     for m in preliminary:
         tkr = m["ticker"]
         evt = m.get("event_ticker") or tkr
+        bucket = classify_orthogonality_bucket(m)
+        gates = BUCKET_GATES[bucket]
+
         ob = orderbooks.get(tkr, {"yes": [], "no": []})
         yes_levels = ob.get("yes", [])
         no_levels = ob.get("no", [])
@@ -1105,14 +1319,14 @@ def evaluate_candidates(
         )
         last_price_yes = extract_cents(m, "last_price", "last_price_dollars")
 
-        # HARD GATE 1: Strict two-sided quote bounds (zero 99c/1c or 0-bid books)
+        # HARD GATE 1: Two-sided quote bounds (zero 99c/1c or 0-bid books)
         if not (MIN_YES_BID_CENTS <= best_yes_bid <= MAX_YES_BID_CENTS):
             continue
         if not (MIN_NO_BID_CENTS <= best_no_bid <= MAX_NO_BID_CENTS):
             continue
 
         spread_cents = 100 - best_yes_bid - best_no_bid
-        if not (MIN_SPREAD_CENTS <= spread_cents <= MAX_SPREAD_CENTS):
+        if not (MIN_SPREAD_CENTS <= spread_cents <= gates["max_spread_cents"]):
             continue
 
         top_no_queue = int(round(sum(q for _, q in no_levels[:2])))
@@ -1121,12 +1335,16 @@ def evaluate_candidates(
         total_book_qty = total_no_qty + total_yes_qty
 
         vol_24h = extract_count(m, "volume_24h", "volume_24h_fp")
+        vol_total = extract_count(m, "volume", "volume_fp")
         open_int = extract_count(m, "open_interest", "open_interest_fp")
 
-        # HARD GATE 2: Minimum real resting depth & market participation
-        if total_yes_qty <= 0 or total_book_qty < MIN_TOTAL_BOOK_CONTRACTS:
+        # HARD GATE 2: Bucket-calibrated resting depth & market participation
+        if total_yes_qty <= 0 or total_book_qty < gates["min_book_contracts"]:
             continue
-        if max(vol_24h, open_int, float(total_book_qty)) < MIN_ACTIVITY_CONTRACTS:
+        if (
+            max(vol_24h, open_int, vol_total * 0.25, float(total_book_qty))
+            < gates["min_activity_contracts"]
+        ):
             continue
         if top_no_queue > MAX_TOP_NO_QUEUE_DEPTH:
             continue
@@ -1141,12 +1359,15 @@ def evaluate_candidates(
             continue
 
         funnel["passed_spread_and_depth_gate"] += 1
+        bucket_funnel[bucket]["spread_and_depth"] += 1
 
-        bucket = classify_orthogonality_bucket(m)
+        mut_excl = bool(m.get("_mutually_exclusive", False))
         edge_ok, edge_proof, matched_station = verify_oracle_tail_edge(
             market=m,
             bucket=bucket,
             best_yes_bid=best_yes_bid,
+            spread_cents=spread_cents,
+            mutually_exclusive=mut_excl,
             event_max_yes_bid=event_max_yes_bid.get(evt, best_yes_bid),
             event_market_count=event_counts.get(evt, 1),
             weather_oracles=weather_oracles,
@@ -1156,8 +1377,11 @@ def evaluate_candidates(
             continue
 
         funnel["passed_oracle_tail_gate"] += 1
+        bucket_funnel[bucket]["oracle_tail"] += 1
 
         rec_maker_no_bid = min(best_no_bid + 1, 96)
+        if rec_maker_no_bid < 82:
+            rec_maker_no_bid = 82
         implied_yes_ask = 100 - best_no_bid
         price_per_contract = rec_maker_no_bid / 100.0
 
@@ -1180,10 +1404,10 @@ def evaluate_candidates(
             0.07 * price_per_contract * (1.0 - price_per_contract), 4
         )
 
-        # Only report multi-candidate overround when outcomes are mutually exclusive
-        mut_excl = bool(m.get("_mutually_exclusive", False))
         raw_overround = round(event_yes_ask_sum.get(evt, 100) / 100.0, 2)
-        effective_overround = raw_overround if (mut_excl and event_counts.get(evt, 1) >= 2) else 1.0
+        effective_overround = (
+            raw_overround if (mut_excl and event_counts.get(evt, 1) >= 2) else 1.0
+        )
 
         hrs = m["_hours_to_expiration"]
         velocity_bonus = max(0.0, (MAX_HOURS_TO_EXPIRATION - hrs) / 24.0) * 1.5
@@ -1195,7 +1419,7 @@ def evaluate_candidates(
             + velocity_bonus
             + depth_bonus
             + overround_bonus
-            - (spread_cents * 1.1)
+            - (spread_cents * 0.9)
             - (top_no_queue * 0.004)
         )
 
@@ -1212,6 +1436,7 @@ def evaluate_candidates(
                 "hours_to_expiration": hrs,
                 "expiration_iso": m.get("expected_expiration_time")
                 or m.get("close_time")
+                or m.get("latest_expiration_time")
                 or m.get("expiration_time"),
                 "quality_score": round(quality_score, 3),
                 "oracle_edge_proof": edge_proof,
@@ -1221,7 +1446,7 @@ def evaluate_candidates(
                     "implied_yes_ask_cents": implied_yes_ask,
                     "last_price_yes_cents": last_price_yes,
                     "recommended_maker_no_bid_cents": rec_maker_no_bid,
-                    "price_improvement_cents": 1,
+                    "price_improvement_cents": rec_maker_no_bid - best_no_bid,
                 },
                 "microstructure_metrics": {
                     "spread_cents": spread_cents,
@@ -1290,7 +1515,6 @@ def select_orthogonal_top_candidates(
         b: (by_bucket[b][0] if by_bucket[b] else None) for b in buckets
     }
 
-    # Deduplicate to max 2 brackets per event in the Top 25 table so one event never hogs all rows
     balanced: List[Dict[str, Any]] = []
     seen_tickers = set()
     event_row_counts: Dict[str, int] = {}
@@ -1326,11 +1550,12 @@ def write_outputs(snapshot: Dict[str, Any]) -> None:
 
     b_info = snapshot["bankroll_and_kelly_sizing"]
     funnel = snapshot["diagnostics_funnel"]
+    pb = funnel["per_bucket_stages"]
     sel_3 = snapshot["selected_3_orthogonal_picks"]
     top_25 = snapshot["top_25_uncrowded_candidates"]
 
     lines = [
-        "# Patroclus Kalshi Longshot-Bias Underwriting Snapshot (v3.0)",
+        "# Patroclus Kalshi Longshot-Bias Underwriting Snapshot (v3.1)",
         f"**Timestamp:** `{snapshot['generated_at_utc']}`  ",
         f"**Repository:** [{snapshot['repository_url']}]({snapshot['repository_url']})  ",
         "",
@@ -1341,13 +1566,25 @@ def write_outputs(snapshot: Dict[str, Any]) -> None:
         f"* **Max Daily Deployed Capital (15% Max):** `${b_info['max_daily_deployed_15pct']:.2f}`",
         f"* **Dry Powder Reserve (85% Min):** `${b_info['dry_powder_reserve_85pct']:.2f}`",
         "",
-        "## 2. Scanner Diagnostics Funnel",
+        "## 2. Scanner Diagnostics Funnel (v3.1 Per-Bucket Telemetry)",
         f"* **Open Non-Parlay Markets Scanned:** `{funnel['markets_scanned']}`",
-        f"* **In Expiration Window (8h - 168h):** `{funnel['in_8h_168h_window']}`",
-        f"* **Passed Preliminary Two-Sided Quote Gate:** `{funnel['passed_prelim_quote_gate']}`",
+        f"* **In Expiration Window (8h - 168h):** `{funnel['in_8h_168h_window']}` "
+        f"(Bucket A: `{pb['BUCKET_A_WEATHER_ATMOSPHERIC']['in_window']}`, "
+        f"Bucket B: `{pb['BUCKET_B_MACRO_ENERGY_COMMODITY']['in_window']}`, "
+        f"Bucket C: `{pb['BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE']['in_window']}`)",
+        f"* **Passed Preliminary Two-Sided Quote Gate:** `{funnel['passed_prelim_quote_gate']}` "
+        f"(A: `{pb['BUCKET_A_WEATHER_ATMOSPHERIC']['prelim_quote']}`, "
+        f"B: `{pb['BUCKET_B_MACRO_ENERGY_COMMODITY']['prelim_quote']}`, "
+        f"C: `{pb['BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE']['prelim_quote']}`)",
         f"* **Non-Empty Orderbooks Retrieved (`orderbook_fp`):** `{funnel['orderbooks_non_empty']}`",
-        f"* **Passed Spread (2c-15c) & Book Depth Gate:** `{funnel['passed_spread_and_depth_gate']}`",
-        f"* **Passed Strike-vs-Oracle Tail Gate:** `{funnel['passed_oracle_tail_gate']}`",
+        f"* **Passed Bucket Spread & Depth Gate:** `{funnel['passed_spread_and_depth_gate']}` "
+        f"(A: `{pb['BUCKET_A_WEATHER_ATMOSPHERIC']['spread_and_depth']}`, "
+        f"B: `{pb['BUCKET_B_MACRO_ENERGY_COMMODITY']['spread_and_depth']}`, "
+        f"C: `{pb['BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE']['spread_and_depth']}`)",
+        f"* **Passed Strike-vs-Oracle Tail Gate:** `{funnel['passed_oracle_tail_gate']}` "
+        f"(A: `{pb['BUCKET_A_WEATHER_ATMOSPHERIC']['oracle_tail']}`, "
+        f"B: `{pb['BUCKET_B_MACRO_ENERGY_COMMODITY']['oracle_tail']}`, "
+        f"C: `{pb['BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE']['oracle_tail']}`)",
         "",
         "## 3. Top 3 Orthogonal Picks (1 Per Bucket)",
     ]
@@ -1355,7 +1592,7 @@ def write_outputs(snapshot: Dict[str, Any]) -> None:
     for bucket_name, cand in sel_3.items():
         if cand is None:
             lines.append(
-                f"* **{bucket_name}:** `SKIP BUCKET` — No contract currently meets two-sided spread (2c-15c), book depth, and oracle tail distance gates."
+                f"* **{bucket_name}:** `SKIP BUCKET` — No contract currently meets bucket spread, book depth, and oracle tail distance gates."
             )
         else:
             ob = cand["orderbook_pricing"]
@@ -1409,24 +1646,25 @@ def main() -> None:
     energy_oracles = fetch_energy_oracles()
     space_proc_oracles = fetch_space_and_procedural_oracles()
 
-    markets, harvest_stats = harvest_kalshi_markets(now_utc)
+    markets, event_meta_map, harvest_stats = harvest_kalshi_markets(now_utc)
     all_candidates, funnel = evaluate_candidates(
-        markets, bankroll_info, weather_oracles, energy_oracles, now_utc
+        markets,
+        event_meta_map,
+        bankroll_info,
+        weather_oracles,
+        energy_oracles,
+        now_utc,
     )
     selected_3, top_25 = select_orthogonal_top_candidates(all_candidates)
 
     bucket_counts = {
         b: sum(1 for c in all_candidates if c["orthogonality_bucket"] == b)
-        for b in (
-            "BUCKET_A_WEATHER_ATMOSPHERIC",
-            "BUCKET_B_MACRO_ENERGY_COMMODITY",
-            "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
-        )
+        for b in BUCKET_GATES.keys()
     }
     funnel["candidates_by_bucket"] = bucket_counts
 
     snapshot = {
-        "scanner_name": "Patroclus Kalshi Longshot-Bias Underwriting Scanner v3.0",
+        "scanner_name": "Patroclus Kalshi Longshot-Bias Underwriting Scanner v3.1",
         "generated_at_utc": now_utc.isoformat(),
         "repository_url": "https://github.com/chrisdonreynolds/patroclus",
         "raw_json_url": "https://raw.githubusercontent.com/chrisdonreynolds/patroclus/main/kalshi_snapshot.json",
