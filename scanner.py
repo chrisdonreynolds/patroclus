@@ -10,7 +10,9 @@ Author: Christopher Don Reynolds (christopherdonreynolds@gmail.com)
 Architecture:
 1. Dynamic Bankroll Sizing via Kalshi Portfolio Balance Endpoint (RSA-PSS SHA-256 & Ed25519 compatible)
    STRICTLY READ-ONLY: Never calls order-creation or trade-execution endpoints.
-2. Broad Kalshi Market Harvesting (paginated GET /markets?status=open&limit=200 + batched /markets/orderbooks)
+   Includes automatic $200.00 Sizing Floor when live account balance is below $20.00 so contract
+   counts never round down to 0 while reporting exact live cents/dollars.
+2. Broad Kalshi Market Harvesting (paginated GET /markets?status=open&limit=200 + pre-filtered longshot orderbooks)
 3. Seven Primary "Truth Feed" Scrapers across standard & niche Kalshi verticals
 4. Microstructure & Anti-Bot Crowding Math (Spread, Queue Depth, OBI, Overround, Quadratic Fee Drag, 5% Kelly Cap)
 5. Outputs kalshi_snapshot.json and kalshi_snapshot.md for the 8:00 PM EST Gemini Scheduled Task.
@@ -63,14 +65,15 @@ ROTTEN_TOMATOES_BROWSE_URL = "https://www.rottentomatoes.com/browse/movies_in_th
 
 # Quantitative Strategy Constants
 FALLBACK_BANKROLL_DOLLARS = 200.00
-SINGLE_PICK_ALLOCATION_PCT = 0.05  # 5% per pick
-MAX_DAILY_PICKS = 3                # 15% total deployed, 85% dry powder
+MIN_SIZING_BANKROLL_FLOOR_DOLLARS = 20.00  # Uses $200.00 sizing floor if live balance < $20 so 5% cap >= $1.00
+SINGLE_PICK_ALLOCATION_PCT = 0.05          # 5% per pick
+MAX_DAILY_PICKS = 3                        # 15% total deployed, 85% dry powder
 MIN_EXPIRATION_HOURS = 18.0
 MAX_EXPIRATION_HOURS = 72.0
 MIN_LONGSHOT_YES_CENTS = 4
-MAX_LONGSHOT_YES_CENTS = 18        # Corresponding No underwriting price: 82c to 96c
+MAX_LONGSHOT_YES_CENTS = 18                # Corresponding No underwriting price: 82c to 96c
 MAX_TOP_NO_QUEUE_DEPTH = 2000
-MAX_OBI_THRESHOLD = 0.82           # High Adverse Selection threshold when Yes depth is thin
+MAX_OBI_THRESHOLD = 0.82                   # High Adverse Selection threshold when Yes depth is thin
 TOP_CANDIDATES_EXPORT_LIMIT = 25
 
 # Exact Kalshi Weather Settlement Airport Stations & Coordinates (for NWS Grid & METAR Observation Checks)
@@ -98,10 +101,12 @@ def safe_get(
     url: str,
     params: Optional[Dict[str, Any]] = None,
     headers: Optional[Dict[str, str]] = None,
+    accept: str = "application/json",
     timeout: int = 15,
+    **kwargs: Any,
 ) -> Optional[requests.Response]:
-    """Resilient HTTP GET wrapper with rate-limit backoff and exact User-Agent header."""
-    req_headers = get_standard_headers()
+    """Resilient HTTP GET wrapper with rate-limit backoff, accept content-type support, and exact User-Agent header."""
+    req_headers = get_standard_headers(accept=accept)
     if headers:
         req_headers.update(headers)
     for attempt in range(3):
@@ -167,7 +172,9 @@ def fetch_dynamic_kalshi_bankroll() -> Dict[str, Any]:
     Queries GET https://external-api.kalshi.com/trade-api/v2/portfolio/balance
     using KALSHI_ACCESS_KEY and KALSHI_PRIVATE_KEY from GitHub Secrets.
     Extracts balance (cents) and portfolio_value (cents) and computes the 5% cap.
-    Falls back cleanly to $200.00 if secrets are empty or unset during testing.
+    If the live account balance is below $20.00 (e.g., $0.02 between deposits),
+    it records the exact live balance AND applies the $200.00 fallback sizing floor
+    so contract sizing never rounds down to 0 contracts.
     """
     access_key = os.environ.get("KALSHI_ACCESS_KEY", "").strip()
     private_key = os.environ.get("KALSHI_PRIVATE_KEY", "").strip()
@@ -182,6 +189,8 @@ def fetch_dynamic_kalshi_bankroll() -> Dict[str, Any]:
             "portfolio_value_cents": 0,
             "available_cash_dollars": FALLBACK_BANKROLL_DOLLARS,
             "portfolio_value_dollars": 0.0,
+            "live_reported_bankroll_dollars": 0.0,
+            "used_minimum_sizing_floor": True,
             "total_liquid_bankroll_dollars": total_dollars,
             "max_dollar_risk_5pct": max_5pct,
             "max_daily_deployed_15pct": round(total_dollars * 0.15, 2),
@@ -211,23 +220,33 @@ def fetch_dynamic_kalshi_bankroll() -> Dict[str, Any]:
             portfolio_cents = int(data.get("portfolio_value", 0))
             cash_dollars = round(balance_cents / 100.0, 2)
             portfolio_dollars = round(portfolio_cents / 100.0, 2)
-            # Total liquid bankroll combines available cash + mark-to-market portfolio value
-            # (or uses available cash if portfolio_value already reflects open positions)
-            total_bankroll = round((balance_cents + portfolio_cents) / 100.0, 2)
-            if total_bankroll <= 0:
-                total_bankroll = FALLBACK_BANKROLL_DOLLARS
-            max_5pct = round(total_bankroll * SINGLE_PICK_ALLOCATION_PCT, 2)
+            live_total_bankroll = round((balance_cents + portfolio_cents) / 100.0, 2)
+
+            # Apply $200.00 sizing floor if live balance is below $20.00 (e.g. $0.02)
+            # so floor(max_dollar_risk_5pct / price) always yields actionable contract counts.
+            if live_total_bankroll < MIN_SIZING_BANKROLL_FLOOR_DOLLARS:
+                effective_bankroll = FALLBACK_BANKROLL_DOLLARS
+                used_floor = True
+                source_label = f"LIVE_KALSHI_PORTFOLIO_API (Live=${live_total_bankroll:.2f}; SizingFloor=${FALLBACK_BANKROLL_DOLLARS:.2f})"
+            else:
+                effective_bankroll = live_total_bankroll
+                used_floor = False
+                source_label = "LIVE_KALSHI_PORTFOLIO_API"
+
+            max_5pct = round(effective_bankroll * SINGLE_PICK_ALLOCATION_PCT, 2)
             return {
-                "source": "LIVE_KALSHI_PORTFOLIO_API",
+                "source": source_label,
                 "authenticated": True,
                 "available_cash_cents": balance_cents,
                 "portfolio_value_cents": portfolio_cents,
                 "available_cash_dollars": cash_dollars,
                 "portfolio_value_dollars": portfolio_dollars,
-                "total_liquid_bankroll_dollars": total_bankroll,
+                "live_reported_bankroll_dollars": live_total_bankroll,
+                "used_minimum_sizing_floor": used_floor,
+                "total_liquid_bankroll_dollars": effective_bankroll,
                 "max_dollar_risk_5pct": max_5pct,
-                "max_daily_deployed_15pct": round(total_bankroll * 0.15, 2),
-                "dry_powder_reserve_85pct": round(total_bankroll * 0.85, 2),
+                "max_daily_deployed_15pct": round(effective_bankroll * 0.15, 2),
+                "dry_powder_reserve_85pct": round(effective_bankroll * 0.85, 2),
                 "endpoint_queried": KALSHI_BALANCE_URL,
             }
         else:
@@ -240,6 +259,8 @@ def fetch_dynamic_kalshi_bankroll() -> Dict[str, Any]:
                 "portfolio_value_cents": 0,
                 "available_cash_dollars": FALLBACK_BANKROLL_DOLLARS,
                 "portfolio_value_dollars": 0.0,
+                "live_reported_bankroll_dollars": 0.0,
+                "used_minimum_sizing_floor": True,
                 "total_liquid_bankroll_dollars": total_dollars,
                 "max_dollar_risk_5pct": round(total_dollars * SINGLE_PICK_ALLOCATION_PCT, 2),
                 "max_daily_deployed_15pct": round(total_dollars * 0.15, 2),
@@ -255,6 +276,8 @@ def fetch_dynamic_kalshi_bankroll() -> Dict[str, Any]:
             "portfolio_value_cents": 0,
             "available_cash_dollars": FALLBACK_BANKROLL_DOLLARS,
             "portfolio_value_dollars": 0.0,
+            "live_reported_bankroll_dollars": 0.0,
+            "used_minimum_sizing_floor": True,
             "total_liquid_bankroll_dollars": total_dollars,
             "max_dollar_risk_5pct": round(total_dollars * SINGLE_PICK_ALLOCATION_PCT, 2),
             "max_daily_deployed_15pct": round(total_dollars * 0.15, 2),
@@ -305,6 +328,28 @@ def price_field_to_cents(market: Dict[str, Any], cents_key: str, dollars_key: st
     return None
 
 
+def is_preliminary_longshot_candidate(market: Dict[str, Any]) -> bool:
+    """
+    Checks market summary fields from /markets so we prioritize fetching live orderbooks
+    for markets trading near the 4c-18c Yes (82c-96c No) longshot zone.
+    Uses a slightly wider preliminary band (2c-25c Yes or 75c-98c No) to catch wide spreads.
+    """
+    no_bid = price_field_to_cents(market, "no_bid", "no_bid_dollars")
+    yes_ask = price_field_to_cents(market, "yes_ask", "yes_ask_dollars")
+    last_yes = price_field_to_cents(market, "last_price", "last_price_dollars")
+    yes_bid = price_field_to_cents(market, "yes_bid", "yes_bid_dollars")
+
+    if no_bid is not None and 75 <= no_bid <= 98:
+        return True
+    if yes_ask is not None and 2 <= yes_ask <= 25:
+        return True
+    if last_yes is not None and 2 <= last_yes <= 25:
+        return True
+    if yes_bid is not None and 1 <= yes_bid <= 20:
+        return True
+    return False
+
+
 def harvest_kalshi_markets(max_pages: int = 12) -> Tuple[List[Dict[str, Any]], Dict[str, List[Dict[str, Any]]], Dict[str, Any]]:
     """
     Paginates through GET https://external-api.kalshi.com/trade-api/v2/markets?status=open&limit=200
@@ -351,10 +396,8 @@ def harvest_kalshi_markets(max_pages: int = 12) -> Tuple[List[Dict[str, Any]], D
         cursor = payload.get("cursor")
         if not cursor:
             break
-        time.sleep(0.12)
+        time.sleep(0.10)
 
-    # If the strict 18-72h window has fewer than 40 markets (e.g., quiet mid-week window),
-    # include markets expiring within 6 to 120 hours while flagging exact hours_to_expiration.
     used_extended_window = False
     if len(window_markets) < 40 and all_open_markets:
         used_extended_window = True
@@ -391,7 +434,6 @@ def parse_orderbook_levels(raw_levels: Any) -> List[Tuple[int, int]]:
             try:
                 p_float = float(raw_p)
                 q_float = float(raw_q)
-                # If price is expressed in dollars (< 1.01 and contains decimal), convert to cents
                 if isinstance(raw_p, str) and "." in raw_p and p_float <= 1.0:
                     p_cents = int(round(p_float * 100))
                 else:
@@ -434,8 +476,6 @@ def batch_fetch_orderbooks(tickers: List[str]) -> Dict[str, Dict[str, List[Tuple
 
         if resp is not None and resp.status_code == 200:
             data = resp.json()
-            # Batch endpoint returns {"orderbooks": [{"market_ticker": ..., "yes": [...], "no": [...]}]}
-            # or a dict keyed by ticker
             raw_obs = data.get("orderbooks", data)
             if isinstance(raw_obs, list):
                 for entry in raw_obs:
@@ -452,9 +492,8 @@ def batch_fetch_orderbooks(tickers: List[str]) -> Dict[str, Dict[str, List[Tuple
                         no_levels = parse_orderbook_levels(ob_body.get("no") or ob_body.get("no_dollars") or [])
                         orderbooks[tkr] = {"yes": yes_levels, "no": no_levels}
 
-        # Fallback to individual /markets/{ticker}/orderbook for any ticker missing from batch response
         missing = [t for t in chunk if t not in orderbooks]
-        for tkr in missing[:40]:
+        for tkr in missing[:35]:
             single_url = f"{KALSHI_MARKETS_URL}/{tkr}/orderbook"
             s_resp = safe_get(single_url, timeout=10)
             if s_resp is not None and s_resp.status_code == 200:
@@ -463,9 +502,9 @@ def batch_fetch_orderbooks(tickers: List[str]) -> Dict[str, Dict[str, List[Tuple
                     yes_levels = parse_orderbook_levels(s_data.get("yes") or s_data.get("yes_dollars") or [])
                     no_levels = parse_orderbook_levels(s_data.get("no") or s_data.get("no_dollars") or [])
                     orderbooks[tkr] = {"yes": yes_levels, "no": no_levels}
-            time.sleep(0.06)
+            time.sleep(0.05)
 
-        time.sleep(0.15)
+        time.sleep(0.12)
 
     return orderbooks
 
@@ -684,7 +723,6 @@ def fetch_vertical_4_entertainment_and_critics() -> Dict[str, Any]:
         except Exception:
             pass
 
-    # Always include reference 150-review mathematical hurdle table for matching RT markets
     reference_hurdle_table = {
         "150_reviews_locked_need_+3pct_in_20_new_reviews": compute_rotten_tomatoes_hurdle(78.0, 150, 20, 81.0),
         "150_reviews_locked_need_+5pct_in_25_new_reviews": compute_rotten_tomatoes_hurdle(80.0, 150, 25, 85.0),
@@ -731,11 +769,15 @@ def compute_vertical_5_field_inflation(
                 best_no_bid = no_levels[0][0]
                 implied_yes_ask = 100 - best_no_bid
             else:
-                implied_yes_ask = (
-                    price_field_to_cents(m, "yes_ask", "yes_ask_dollars")
-                    or price_field_to_cents(m, "last_price", "last_price_dollars")
-                    or 0
-                )
+                no_bid_summary = price_field_to_cents(m, "no_bid", "no_bid_dollars")
+                if no_bid_summary is not None and 1 <= no_bid_summary <= 99:
+                    implied_yes_ask = 100 - no_bid_summary
+                else:
+                    implied_yes_ask = (
+                        price_field_to_cents(m, "yes_ask", "yes_ask_dollars")
+                        or price_field_to_cents(m, "last_price", "last_price_dollars")
+                        or 0
+                    )
             if 1 <= implied_yes_ask <= 99:
                 total_implied_yes_cents += implied_yes_ask
                 valid_legs += 1
@@ -773,8 +815,6 @@ def check_metar_celsius_rounding_trap() -> List[Dict[str, Any]]:
         hits_in_bracket = [
             c for c, f_val in c_to_f_map.items() if bracket_low <= f_val <= bracket_high
         ]
-        # A 2-degree F bracket normally captures 1 whole C degree, but when a skipped F degree
-        # falls inside the bracket, 0 or 2 whole C degrees can map into adjacent brackets.
         if len(hits_in_bracket) != 1 or bracket_low in skipped_f_degrees or bracket_high in skipped_f_degrees:
             uneven_brackets.append({
                 "bracket_f": f"{bracket_low}F-{bracket_high}F",
@@ -799,7 +839,6 @@ def fetch_vertical_6_weather_grids() -> Dict[str, Any]:
 
     for station_id, meta in KALSHI_WEATHER_STATIONS.items():
         lat, lon = meta["lat"], meta["lon"]
-        tz_offset = meta["tz_offset"]
         station_info: Dict[str, Any] = {
             "station_id": station_id,
             "city": meta["city"],
@@ -813,7 +852,6 @@ def fetch_vertical_6_weather_grids() -> Dict[str, Any]:
             "metar_celsius_rounding_warning": True,
         }
 
-        # 1. Fetch NWS gridpoint & forecastHourly
         pt_resp = safe_get(station_info["points_url"], accept="application/geo+json", timeout=12)
         if pt_resp is not None and pt_resp.status_code == 200:
             try:
@@ -849,7 +887,6 @@ def fetch_vertical_6_weather_grids() -> Dict[str, Any]:
             except Exception:
                 pass
 
-        # 2. Fetch latest 24-hour station observations (METAR Celsius)
         obs_resp = safe_get(station_info["observations_url"], accept="application/geo+json", timeout=12)
         if obs_resp is not None and obs_resp.status_code == 200:
             try:
@@ -897,7 +934,6 @@ def fetch_vertical_7_aaa_gas_and_eia() -> Dict[str, Any]:
         try:
             soup = BeautifulSoup(aaa_resp.text, "lxml")
             text_blob = soup.get_text(" ", strip=True)
-            # Extract dollar figures like $3.9081 or $3.908 from AAA table
             prices = [float(x) for x in re.findall(r"\$([2-6]\.\d{3,4})", text_blob)]
             if len(prices) >= 3:
                 aaa_data["current_regular_avg"] = prices[0]
@@ -908,7 +944,6 @@ def fetch_vertical_7_aaa_gas_and_eia() -> Dict[str, Any]:
 
                 diff_1d_cents = round((prices[0] - prices[1]) * 100.0, 3)
                 diff_7d_cents_per_day = round(((prices[0] - prices[2]) * 100.0) / 7.0, 3)
-                # 3-day rolling daily cent-change velocity blends 1d impulse and 7d smoothed drift
                 rolling_3d_vel = round(0.6 * diff_1d_cents + 0.4 * diff_7d_cents_per_day, 3)
                 aaa_data["daily_cent_velocity_1d"] = diff_1d_cents
                 aaa_data["rolling_3d_estimated_cent_velocity_per_day"] = rolling_3d_vel
@@ -955,7 +990,6 @@ def classify_market_vertical_and_attach_oracle(
 
     ev_info = event_inflation_map.get(market.get("event_ticker") or market.get("series_ticker") or "", {})
 
-    # Check Vertical 6: Weather / Temperature / Rain / Snow
     if any(k in combined for k in ("KXHIGH", "KXLOW", "HIGHNY", "HIGHCHI", "HIGHMIA", "HIGHLAX", "HIGHDEN", "HIGHHOU", "HIGHAUS", "HIGHPHIL", "TEMP", "WEATHER", "DEGREE", "RAIN", "SNOW")):
         matched_station = "KNYC"
         for st_code, st_meta in KALSHI_WEATHER_STATIONS.items():
@@ -974,7 +1008,6 @@ def classify_market_vertical_and_attach_oracle(
             },
         )
 
-    # Check Vertical 7: AAA Gas / Oil / Energy / CPI / Inflation / Fed Rates
     if any(k in combined for k in ("GAS", "AAA", "OIL", "WTI", "BRENT", "EIA", "ENERGY", "CPI", "INFLATION", "PCE", "TREASURY", "YIELD", "FED")):
         return (
             "Vertical 7: AAA Daily National Gas & EIA Energy / Macro Trends",
@@ -986,7 +1019,6 @@ def classify_market_vertical_and_attach_oracle(
             },
         )
 
-    # Check Vertical 3: SpaceX / Launches / TSA / Aviation
     if any(k in combined for k in ("SPACEX", "STARSHIP", "FALCON", "LAUNCH", "FAA", "TSA", "PASSENGER", "FLIGHT", "BOEING")):
         return (
             "Vertical 3: SpaceX Launches & TSA Operational Throughput",
@@ -998,7 +1030,6 @@ def classify_market_vertical_and_attach_oracle(
             },
         )
 
-    # Check Vertical 4: Entertainment / Rotten Tomatoes / Netflix / Box Office / Music
     if any(k in combined for k in ("ROTTEN", "TOMATO", "NETFLIX", "BOX OFFICE", "BILLBOARD", "SPOTIFY", "OSCAR", "EMMY", "GRAMMY", "MOVIE", "ALBUM")):
         return (
             "Vertical 4: Entertainment, Streaming Ranks & Rotten Tomatoes Hurdles",
@@ -1010,7 +1041,6 @@ def classify_market_vertical_and_attach_oracle(
             },
         )
 
-    # Check Vertical 1: Corporate & Political "Mention" / Transcript Markets
     if any(k in combined for k in ("MENTION", "SAY ", "SPEECH", "TRANSCRIPT", "EARNINGS CALL", "PRESS CONFERENCE", "WORD")):
         return (
             "Vertical 1: Corporate & Political Mention / Transcript Baselines",
@@ -1022,7 +1052,6 @@ def classify_market_vertical_and_attach_oracle(
             },
         )
 
-    # Check Vertical 2: Procedural / Legislative / Regulatory Deadlines
     if any(k in combined for k in ("BILL", "CONGRESS", "SENATE", "HOUSE", "PASS", "LAW", "RULE", "SEC ", "FTC", "FDA", "APPROVE", "CONFIRM", "IPO")):
         return (
             "Vertical 2: Procedural, Regulatory & Legislative Dead-Cat Deadlines",
@@ -1034,7 +1063,6 @@ def classify_market_vertical_and_attach_oracle(
             },
         )
 
-    # Check Vertical 5: Multi-Candidate Field Inflation (Default for multi-leg events)
     return (
         "Vertical 5: Multi-Candidate Field Inflation Events",
         "BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE",
@@ -1074,12 +1102,10 @@ def evaluate_candidate_microstructure(
     best_no_bid = no_levels[0][0] if no_levels else (price_field_to_cents(market, "no_bid", "no_bid_dollars") or 0)
     last_price_yes = price_field_to_cents(market, "last_price", "last_price_dollars")
 
-    # Implied Yes ask from reciprocal No bid: 100 - best_no_bid
     implied_yes_ask = (100 - best_no_bid) if (1 <= best_no_bid <= 99) else last_price_yes
     if implied_yes_ask is None:
         return None
 
-    # Filter for Longshot Bias Candidates: implied Yes price (either last_price or 100 - best_no_bid) between 4c and 18c
     in_longshot_zone_by_no_bid = (MIN_LONGSHOT_YES_CENTS <= implied_yes_ask <= MAX_LONGSHOT_YES_CENTS)
     in_longshot_zone_by_last = (
         last_price_yes is not None and MIN_LONGSHOT_YES_CENTS <= last_price_yes <= MAX_LONGSHOT_YES_CENTS
@@ -1087,30 +1113,22 @@ def evaluate_candidate_microstructure(
     if not (in_longshot_zone_by_no_bid or in_longshot_zone_by_last):
         return None
 
-    # Ensure best_no_bid sits in the valid underwriting zone (82c to 96c)
     if not (82 <= best_no_bid <= 96):
         if last_price_yes is not None and (4 <= last_price_yes <= 18):
             best_no_bid = 100 - last_price_yes
         else:
             return None
 
-    # 1. Resting Bid-Ask Spread Width (spread_cents)
     spread_cents = 100 - best_yes_bid - best_no_bid
     if spread_cents < 1:
         spread_cents = 1
 
-    # 2. Top-of-Book 'No' Queue Depth (top 2 price levels) & Order Book Imbalance (obi)
     top_no_queue_depth = sum(qty for _, qty in no_levels[:2]) if no_levels else 0
     total_no_bid_qty = sum(qty for _, qty in no_levels) if no_levels else 0
     total_yes_bid_qty = sum(qty for _, qty in yes_levels) if yes_levels else 0
     denom = total_no_bid_qty + total_yes_bid_qty
     obi = round((total_no_bid_qty - total_yes_bid_qty) / denom, 4) if denom > 0 else 0.0
 
-    # Adverse Selection / Bot-Crowding Rejection Check:
-    # Reject/exclude if:
-    # - spread_cents < 2 AND queue is jammed (top_no_queue_depth > 500)
-    # - top_no_queue_depth > 2000 contracts
-    # - obi shows a massive institutional bot wall on the No side (> 0.82) with almost zero retail Yes depth (< 50)
     jammed_tight_spread = (spread_cents < 2 and top_no_queue_depth > 500)
     excessive_no_queue = (top_no_queue_depth > MAX_TOP_NO_QUEUE_DEPTH)
     institutional_no_wall = (obi > MAX_OBI_THRESHOLD and total_yes_bid_qty < 50 and total_no_bid_qty > 400)
@@ -1119,25 +1137,18 @@ def evaluate_candidate_microstructure(
     if high_adverse_selection_risk:
         return None
 
-    # Recommended Maker No Bid Price:
-    # Improve current best No bid by 1c when spread_cents >= 2c so we step to the front of the Maker queue
-    # without crossing the spread (preserving $0.00 Maker fee).
     if spread_cents >= 2 and best_no_bid < 96:
         recommended_maker_no_bid_cents = best_no_bid + 1
     else:
         recommended_maker_no_bid_cents = best_no_bid
 
-    # 3. Sum-of-Brackets Event Overround (event_overround)
     ev_metrics = event_inflation_map.get(ev_ticker, {})
     event_overround = float(ev_metrics.get("event_overround", 1.00))
 
-    # 4. Maker vs. Taker Fee Drag Savings (taker_fee_saved)
-    # Quadratic Taker fee formula: 0.07 * P * (1 - P) per contract vs $0.00 Maker fee
     p_no = recommended_maker_no_bid_cents / 100.0
     taker_fee_per_contract_dollars = round(0.07 * p_no * (1.0 - p_no), 4)
     taker_fee_per_contract_cents = round(taker_fee_per_contract_dollars * 100.0, 2)
 
-    # 5. Position Sizing & Fractional Kelly Cap
     total_bankroll_dollars = float(bankroll_info["total_liquid_bankroll_dollars"])
     max_dollar_risk_5pct = round(total_bankroll_dollars * SINGLE_PICK_ALLOCATION_PCT, 2)
     contract_cost_dollars = recommended_maker_no_bid_cents / 100.0
@@ -1150,9 +1161,6 @@ def evaluate_candidate_microstructure(
         market, truth_feeds, event_inflation_map
     )
 
-    # Composite Underwriting Score for sorting the top 25 uncrowded candidates:
-    # Rewards wider Maker spread (2c-6c), low No queue depth, positive event overround (>1.05),
-    # and attractive net yield.
     spread_score = min(spread_cents, 8) * 3.0
     queue_penalty = (top_no_queue_depth / 200.0)
     overround_bonus = max(0.0, (event_overround - 1.00) * 40.0)
@@ -1219,7 +1227,6 @@ def select_diverse_top_candidates(candidates: List[Dict[str, Any]], limit: int =
     selected: List[Dict[str, Any]] = []
     event_counts: Dict[str, int] = defaultdict(int)
 
-    # Pass 1: Ensure top picks from each orthogonality bucket are included first
     for bucket in (
         "BUCKET_A_WEATHER_ATMOSPHERIC",
         "BUCKET_B_MACRO_ENERGY_COMMODITY",
@@ -1232,7 +1239,6 @@ def select_diverse_top_candidates(candidates: List[Dict[str, Any]], limit: int =
                 selected.append(item)
                 event_counts[ev] += 1
 
-    # Pass 2: Fill remaining slots up to 25 sorted by score
     selected_tickers = {c["ticker"] for c in selected}
     for item in sorted_all:
         if len(selected) >= limit:
@@ -1280,9 +1286,9 @@ def write_snapshot_files(
         "## 1. Live Kalshi Portfolio Bankroll & Fractional Kelly Cap",
         "",
         f"- **Balance Data Source:** `{b_info['source']}` (Queried [{KALSHI_BALANCE_URL}]({KALSHI_BALANCE_URL}))",
-        f"- **Available Cash:** `${b_info['available_cash_dollars']:.2f}` (`{b_info['available_cash_cents']}` cents)",
-        f"- **Portfolio Value:** `${b_info['portfolio_value_dollars']:.2f}` (`{b_info['portfolio_value_cents']}` cents)",
-        f"- **Total Liquid Bankroll:** **`${b_info['total_liquid_bankroll_dollars']:.2f}`**",
+        f"- **Available Cash Reported:** `${b_info['available_cash_dollars']:.2f}` (`{b_info['available_cash_cents']}` cents)",
+        f"- **Portfolio Value Reported:** `${b_info['portfolio_value_dollars']:.2f}` (`{b_info['portfolio_value_cents']}` cents)",
+        f"- **Effective Sizing Bankroll:** **`${b_info['total_liquid_bankroll_dollars']:.2f}`** (`used_minimum_sizing_floor={b_info.get('used_minimum_sizing_floor')}`)",
         f"- **5% Single-Pick Allocation Cap (`max_dollar_risk_5pct`):** **`${b_info['max_dollar_risk_5pct']:.2f}`**",
         f"- **Max Daily Deployment (3 Uncorrelated Picks = 15%):** **`${b_info['max_daily_deployed_15pct']:.2f}`**",
         f"- **Mandatory Dry Powder Reserve (85%):** **`${b_info['dry_powder_reserve_85pct']:.2f}`**",
@@ -1336,7 +1342,7 @@ def main() -> None:
     bankroll_info = fetch_dynamic_kalshi_bankroll()
     print(
         f"[Step 1] Bankroll source={bankroll_info['source']} | "
-        f"Total Liquid=${bankroll_info['total_liquid_bankroll_dollars']:.2f} | "
+        f"Effective Sizing Bankroll=${bankroll_info['total_liquid_bankroll_dollars']:.2f} | "
         f"5% Cap=${bankroll_info['max_dollar_risk_5pct']:.2f}"
     )
 
@@ -1347,10 +1353,14 @@ def main() -> None:
         f"{len(window_markets)} in target expiration window."
     )
 
-    # Pre-screen tickers to batch-fetch orderbooks (plus all legs of their parent events for overround calculation)
-    candidate_event_tickers = set()
+    # Prioritize fetching live orderbooks for preliminary longshot candidates first
+    prelim_longshots = [m for m in window_markets if is_preliminary_longshot_candidate(m)]
+    other_window_markets = [m for m in window_markets if not is_preliminary_longshot_candidate(m)]
+    prioritized_markets = prelim_longshots + other_window_markets
+
     initial_tickers: List[str] = []
-    for m in window_markets:
+    candidate_event_tickers = set()
+    for m in prioritized_markets[:350]:
         tkr = m.get("ticker")
         ev_tkr = m.get("event_ticker") or m.get("series_ticker")
         if tkr:
@@ -1358,13 +1368,13 @@ def main() -> None:
         if ev_tkr:
             candidate_event_tickers.add(ev_tkr)
 
-    for ev_tkr in list(candidate_event_tickers)[:80]:
+    for ev_tkr in list(candidate_event_tickers)[:60]:
         for leg in event_groups.get(ev_tkr, []):
             leg_tkr = leg.get("ticker")
             if leg_tkr:
                 initial_tickers.append(leg_tkr)
 
-    orderbooks = batch_fetch_orderbooks(initial_tickers[:400])
+    orderbooks = batch_fetch_orderbooks(initial_tickers[:450])
     print(f"[Step 2b] Retrieved {len(orderbooks)} live Kalshi orderbooks.")
 
     # Step 3: Scrape all 7 Primary Truth Verticals
