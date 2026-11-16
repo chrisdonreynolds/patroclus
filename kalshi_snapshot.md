@@ -1,5 +1,5 @@
 # Patroclus Kalshi Longshot-Bias Underwriting Snapshot (v3.1)
-**Timestamp:** `2026-11-15T06:20:18.265599+00:00`  
+**Timestamp:** `2026-11-16T06:18:52.010831+00:00`  
 **Repository:** [https://github.com/chrisdonreynolds/patroclus](https://github.com/chrisdonreynolds/patroclus)  
 
 ## 1. Liquid Bankroll & Kelly Sizing Guardrails
@@ -10,53 +10,53 @@
 * **Dry Powder Reserve (85% Min):** `$170.00`
 
 ## 2. Scanner Diagnostics Funnel (v3.1 Per-Bucket Telemetry)
-* **Open Non-Parlay Markets Scanned:** `12749`
-* **In Expiration Window (8h - 168h):** `5162` (Bucket A: `85`, Bucket B: `377`, Bucket C: `4700`)
-* **Passed Preliminary Two-Sided Quote Gate:** `759` (A: `13`, B: `58`, C: `688`)
-* **Non-Empty Orderbooks Retrieved (`orderbook_fp`):** `759`
-* **Passed Bucket Spread & Depth Gate:** `279` (A: `2`, B: `5`, C: `272`)
-* **Passed Strike-vs-Oracle Tail Gate:** `278` (A: `1`, B: `5`, C: `272`)
+* **Open Non-Parlay Markets Scanned:** `10513`
+* **In Expiration Window (8h - 168h):** `3687` (Bucket A: `88`, Bucket B: `337`, Bucket C: `3262`)
+* **Passed Preliminary Two-Sided Quote Gate:** `598` (A: `17`, B: `47`, C: `534`)
+* **Non-Empty Orderbooks Retrieved (`orderbook_fp`):** `598`
+* **Passed Bucket Spread & Depth Gate:** `215` (A: `3`, B: `9`, C: `203`)
+* **Passed Strike-vs-Oracle Tail Gate:** `214` (A: `2`, B: `9`, C: `203`)
 
 ## 3. Top 3 Orthogonal Picks (1 Per Bucket)
-* **BUCKET_A_WEATHER_ATMOSPHERIC:** [`KXHIGHDEN-26NOV15-B60.5`](https://kalshi.com/markets/kxhighden-26nov15) — Will the maximum temperature be 60-61° on Nov 15, 2026? (60° to 61°)  
-  * **Action:** Buy No (Limit) @ **90c** x **11 contracts** (Risk `$9.90` to win `$1.10` / `+11.11%`)  
-  * **Book:** Yes Bid `9c` / No Bid `89c` | Spread `2c` | Book Depth `6714` | Expires `37.66h`  
-  * **Oracle Proof:** NWS KDEN forecast high (2026-11-15) is 56.0F; bracket 60.0F-61.0F sits +4.0F above forecast.
-* **BUCKET_B_MACRO_ENERGY_COMMODITY:** [`KXAAAGASCDID-26NOV15-MC`](https://kalshi.com/markets/kxaaagascdid-26nov15) — Will gas prices show a minimal change? (Minimal change)  
+* **BUCKET_A_WEATHER_ATMOSPHERIC:** [`KXRAINDMKE-19NOV26-0`](https://kalshi.com/markets/kxraindmke-19nov26) — Rain in Milwaukee on Nov 19, 2026? (Above 0 inches)  
+  * **Action:** Buy No (Limit) @ **89c** x **11 contracts** (Risk `$9.79` to win `$1.21` / `+12.36%`)  
+  * **Book:** Yes Bid `5c` / No Bid `88c` | Spread `7c` | Book Depth `642` | Expires `104.69h`  
+  * **Oracle Proof:** Independent longshot bid at 5c Yes (88c No bid, 7c two-sided spread across 1 event market(s)).
+* **BUCKET_B_MACRO_ENERGY_COMMODITY:** [`KXAAAGASCDGA-26NOV16-SD`](https://kalshi.com/markets/kxaaagascdga-26nov16) — Will gas prices show a small decrease? (Small decrease)  
   * **Action:** Buy No (Limit) @ **82c** x **12 contracts** (Risk `$9.84` to win `$2.16` / `+21.95%`)  
-  * **Book:** Yes Bid `16c` / No Bid `80c` | Spread `4c` | Book Depth `1972` | Expires `8.66h`  
-  * **Oracle Proof:** Tail longshot bid at 16c Yes (mutually exclusive event modal peak 81c Yes across 5 slices); 4c spread.
-* **BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE:** [`KXUEFANLFTTS-26NOV15FRATUR-TUR`](https://kalshi.com/markets/kxuefanlftts-26nov15fratur) — Will Turkiye record the first goal of the game? (Turkiye)  
-  * **Action:** Buy No (Limit) @ **82c** x **12 contracts** (Risk `$9.84` to win `$2.16` / `+21.95%`)  
-  * **Book:** Yes Bid `17c` / No Bid `80c` | Spread `3c` | Book Depth `6477` | Expires `16.41h`  
-  * **Oracle Proof:** Independent longshot bid at 17c Yes (80c No bid, 3c two-sided spread across 3 event market(s)).
+  * **Book:** Yes Bid `16c` / No Bid `80c` | Spread `4c` | Book Depth `1979` | Expires `8.69h`  
+  * **Oracle Proof:** Independent longshot bid at 16c Yes (80c No bid, 4c two-sided spread across 5 event market(s)).
+* **BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE:** [`KXUEFANLTEAMTOTAL-26NOV17POLSWE-SWE3`](https://kalshi.com/markets/kxuefanlteamtotal-26nov17polswe) — Will Sweden score over 2.5 goals? (Sweden over 2.5 goals)  
+  * **Action:** Buy No (Limit) @ **84c** x **11 contracts** (Risk `$9.24` to win `$1.76` / `+19.05%`)  
+  * **Book:** Yes Bid `14c` / No Bid `83c` | Spread `3c` | Book Depth `17527` | Expires `40.44h`  
+  * **Oracle Proof:** Independent longshot bid at 14c Yes (83c No bid, 3c two-sided spread across 6 event market(s)).
 
 ## 4. Top Uncrowded Maker 'No' Underwriting Candidates
 
 | Rank | Ticker | Bucket | Yes Bid | No Bid | Maker No Bid | Contracts | Spread | Book Depth | Net Return % | Hours Left |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 1 | [KXHIGHDEN-26NOV15-B60.5](https://kalshi.com/markets/kxhighden-26nov15) | BUCKET_A_WEATHER_ATMOSPHERIC | 9c | 89c | **90c** | **11** (`$9.90`) | 2c | 6714 | +11.11% | 37.66h |
-| 2 | [KXAAAGASCDID-26NOV15-MC](https://kalshi.com/markets/kxaaagascdid-26nov15) | BUCKET_B_MACRO_ENERGY_COMMODITY | 16c | 80c | **82c** | **12** (`$9.84`) | 4c | 1972 | +21.95% | 8.66h |
-| 3 | [KXAAAGASCDVA-26NOV15-LD](https://kalshi.com/markets/kxaaagascdva-26nov15) | BUCKET_B_MACRO_ENERGY_COMMODITY | 16c | 80c | **82c** | **12** (`$9.84`) | 4c | 1593 | +21.95% | 8.66h |
-| 4 | [KXAAAGASCDDE-26NOV15-SD](https://kalshi.com/markets/kxaaagascdde-26nov15) | BUCKET_B_MACRO_ENERGY_COMMODITY | 15c | 81c | **82c** | **12** (`$9.84`) | 4c | 1488 | +21.95% | 8.66h |
-| 5 | [KXAAAGASCDIA-26NOV15-SD](https://kalshi.com/markets/kxaaagascdia-26nov15) | BUCKET_B_MACRO_ENERGY_COMMODITY | 10c | 82c | **83c** | **12** (`$9.96`) | 8c | 193 | +20.48% | 8.66h |
-| 6 | [KXJOBLESSCLAIMS-26NOV19-210000](https://kalshi.com/markets/kxjoblessclaims-26nov19) | BUCKET_B_MACRO_ENERGY_COMMODITY | 2c | 93c | **94c** | **10** (`$9.40`) | 5c | 2430 | +6.38% | 104.64h |
-| 7 | [KXUEFANLFTTS-26NOV15FRATUR-TUR](https://kalshi.com/markets/kxuefanlftts-26nov15fratur) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 17c | 80c | **82c** | **12** (`$9.84`) | 3c | 6477 | +21.95% | 16.41h |
-| 8 | [KXUEFANLSCORE-26NOV16GIBMLT-GIB0MLT1](https://kalshi.com/markets/kxuefanlscore-26nov16gibmlt) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 16c | 82c | **83c** | **12** (`$9.96`) | 2c | 8418 | +20.48% | 40.41h |
-| 9 | [KXUEFANLTOTAL-26NOV17POLSWE-5](https://kalshi.com/markets/kxuefanltotal-26nov17polswe) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 17c | 81c | **82c** | **12** (`$9.84`) | 2c | 90070 | +21.95% | 65.41h |
-| 10 | [KXSVK2LGAME-26NOV16FTPZVO-TIE](https://kalshi.com/markets/kxsvk2lgame-26nov16ftpzvo) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 16c | 80c | **82c** | **12** (`$9.84`) | 4c | 15176 | +21.95% | 36.66h |
-| 11 | [KXUEFANLSCORE-26NOV16LTULIE-LTU1LIE0](https://kalshi.com/markets/kxuefanlscore-26nov16ltulie) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 15c | 83c | **84c** | **11** (`$9.24`) | 2c | 8810 | +19.05% | 37.66h |
-| 12 | [KXUEFANLTOTAL-26NOV17ISRAUT-5](https://kalshi.com/markets/kxuefanltotal-26nov17israut) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 17c | 80c | **82c** | **12** (`$9.84`) | 3c | 69908 | +21.95% | 65.41h |
-| 13 | [KXUEFANLSCORE-26NOV16LTULIE-LTU2LIE0](https://kalshi.com/markets/kxuefanlscore-26nov16ltulie) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 16c | 80c | **82c** | **12** (`$9.84`) | 4c | 8755 | +21.95% | 37.66h |
-| 14 | [KXUEFANLTEAMTOTAL-26NOV16GERNED-NED3](https://kalshi.com/markets/kxuefanlteamtotal-26nov16gerned) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 15c | 81c | **82c** | **12** (`$9.84`) | 4c | 25438 | +21.95% | 40.41h |
-| 15 | [KXUEFANLSPREAD-26NOV16GIBMLT-MLT3](https://kalshi.com/markets/kxuefanlspread-26nov16gibmlt) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 15c | 83c | **84c** | **11** (`$9.24`) | 2c | 48739 | +19.05% | 41.41h |
-| 16 | [KXUEFANLTOTAL-26NOV17IRLKOS-4](https://kalshi.com/markets/kxuefanltotal-26nov17irlkos) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 17c | 81c | **82c** | **12** (`$9.84`) | 2c | 90537 | +21.95% | 65.41h |
-| 17 | [KXUEFANLTEAMTOTAL-26NOV15BELITA-ITA3](https://kalshi.com/markets/kxuefanlteamtotal-26nov15belita) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 13c | 85c | **86c** | **11** (`$9.46`) | 2c | 20698 | +16.28% | 16.41h |
-| 18 | [KXUEFANLSPREAD-26NOV17UKRGEO-UKR2](https://kalshi.com/markets/kxuefanlspread-26nov17ukrgeo) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 17c | 80c | **82c** | **12** (`$9.84`) | 3c | 32080 | +21.95% | 65.41h |
-| 19 | [KXUEFANLSCORE-26NOV16ESTBUL-EST1BUL0](https://kalshi.com/markets/kxuefanlscore-26nov16estbul) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 14c | 83c | **84c** | **11** (`$9.24`) | 3c | 9190 | +19.05% | 37.66h |
-| 20 | [KXSVK2LGAME-26NOV16FTPZVO-ZVO](https://kalshi.com/markets/kxsvk2lgame-26nov16ftpzvo) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 12c | 85c | **86c** | **11** (`$9.46`) | 3c | 26910 | +16.28% | 36.66h |
-| 21 | [KXCONCACAFNLTOTAL-26NOV16GLPBMU-6](https://kalshi.com/markets/kxconcacafnltotal-26nov16glpbmu) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 13c | 85c | **86c** | **11** (`$9.46`) | 2c | 43313 | +16.28% | 40.66h |
-| 22 | [KXINTLFRIENDLYGAME-26NOV16ANDAZE-AND](https://kalshi.com/markets/kxintlfriendlygame-26nov16andaze) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 13c | 84c | **85c** | **11** (`$9.35`) | 3c | 66392 | +17.65% | 38.66h |
-| 23 | [KXUEFANLSPREAD-26NOV17ISRAUT-AUT3](https://kalshi.com/markets/kxuefanlspread-26nov17israut) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 17c | 80c | **82c** | **12** (`$9.84`) | 3c | 73107 | +21.95% | 65.41h |
-| 24 | [KXUEFANL1HSPREAD-26NOV16GIBMLT-MLT2](https://kalshi.com/markets/kxuefanl1hspread-26nov16gibmlt) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 13c | 84c | **85c** | **11** (`$9.35`) | 3c | 2012 | +17.65% | 41.41h |
-| 25 | [KXUEFANLSCORE-26NOV16GIBMLT-GIB0MLT2](https://kalshi.com/markets/kxuefanlscore-26nov16gibmlt) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 13c | 84c | **85c** | **11** (`$9.35`) | 3c | 8629 | +17.65% | 40.41h |
+| 1 | [KXRAINDMKE-19NOV26-0](https://kalshi.com/markets/kxraindmke-19nov26) | BUCKET_A_WEATHER_ATMOSPHERIC | 5c | 88c | **89c** | **11** (`$9.79`) | 7c | 642 | +12.36% | 104.69h |
+| 2 | [KXRAINDPIT-21NOV26-0](https://kalshi.com/markets/kxraindpit-21nov26) | BUCKET_A_WEATHER_ATMOSPHERIC | 2c | 86c | **87c** | **11** (`$9.57`) | 12c | 694 | +14.94% | 152.69h |
+| 3 | [KXAAAGASCDGA-26NOV16-SD](https://kalshi.com/markets/kxaaagascdga-26nov16) | BUCKET_B_MACRO_ENERGY_COMMODITY | 16c | 80c | **82c** | **12** (`$9.84`) | 4c | 1979 | +21.95% | 8.69h |
+| 4 | [KXAAAGASCDNC-26NOV16-LD](https://kalshi.com/markets/kxaaagascdnc-26nov16) | BUCKET_B_MACRO_ENERGY_COMMODITY | 9c | 89c | **90c** | **11** (`$9.90`) | 2c | 1774 | +11.11% | 8.69h |
+| 5 | [KXAAAGASCDNV-26NOV16-SD](https://kalshi.com/markets/kxaaagascdnv-26nov16) | BUCKET_B_MACRO_ENERGY_COMMODITY | 10c | 86c | **87c** | **11** (`$9.57`) | 4c | 1538 | +14.94% | 8.69h |
+| 6 | [KXWTI-26NOV1714-T90.49](https://kalshi.com/markets/kxwti-26nov1714) | BUCKET_B_MACRO_ENERGY_COMMODITY | 10c | 86c | **87c** | **11** (`$9.57`) | 4c | 14861 | +14.94% | 37.19h |
+| 7 | [KXWTI-26NOV1714-T90.99](https://kalshi.com/markets/kxwti-26nov1714) | BUCKET_B_MACRO_ENERGY_COMMODITY | 7c | 89c | **90c** | **11** (`$9.90`) | 4c | 15120 | +11.11% | 37.19h |
+| 8 | [KXWTIW-26NOV2014-B85.50](https://kalshi.com/markets/kxwtiw-26nov2014) | BUCKET_B_MACRO_ENERGY_COMMODITY | 7c | 90c | **91c** | **10** (`$9.10`) | 3c | 48017 | +9.89% | 109.19h |
+| 9 | [KXWTIW-26NOV2014-B86.50](https://kalshi.com/markets/kxwtiw-26nov2014) | BUCKET_B_MACRO_ENERGY_COMMODITY | 8c | 89c | **90c** | **11** (`$9.90`) | 3c | 43409 | +11.11% | 109.19h |
+| 10 | [KXUEFANLTEAMTOTAL-26NOV17POLSWE-SWE3](https://kalshi.com/markets/kxuefanlteamtotal-26nov17polswe) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 14c | 83c | **84c** | **11** (`$9.24`) | 3c | 17527 | +19.05% | 40.44h |
+| 11 | [KXCONCACAFNLGAME-26NOV17NICMSR-MSR](https://kalshi.com/markets/kxconcacafnlgame-26nov17nicmsr) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 13c | 84c | **85c** | **11** (`$9.35`) | 3c | 41087 | +17.65% | 47.69h |
+| 12 | [KXBRASILEIROTOTAL-26NOV18GPABAH-5](https://kalshi.com/markets/kxbrasileirototal-26nov18gpabah) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 15c | 82c | **83c** | **12** (`$9.96`) | 3c | 31770 | +20.48% | 70.19h |
+| 13 | [KXBRASILEIROSPREAD-26NOV18CRUPAL-PAL2](https://kalshi.com/markets/kxbrasileirospread-26nov18crupal) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 16c | 80c | **82c** | **12** (`$9.84`) | 4c | 53346 | +21.95% | 69.19h |
+| 14 | [KXCOLLECTIONSALE-KOCH-20NOV26-60000000](https://kalshi.com/markets/kxcollectionsale-koch-20nov26) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 16c | 80c | **82c** | **12** (`$9.84`) | 4c | 2547 | +21.95% | 118.69h |
+| 15 | [KXBRASILEIROSPREAD-26NOV18CRCHA-CR3](https://kalshi.com/markets/kxbrasileirospread-26nov18crcha) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 15c | 82c | **83c** | **12** (`$9.96`) | 3c | 29858 | +20.48% | 68.69h |
+| 16 | [KXBRASILEIROTOTAL-26NOV18CFCSAN-5](https://kalshi.com/markets/kxbrasileirototal-26nov18cfcsan) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 15c | 81c | **82c** | **12** (`$9.84`) | 4c | 30279 | +21.95% | 68.19h |
+| 17 | [KXSILVERW-26NOV2017-T49.99](https://kalshi.com/markets/kxsilverw-26nov2017) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 16c | 81c | **82c** | **12** (`$9.84`) | 3c | 46111 | +21.95% | 111.69h |
+| 18 | [KXEUROCUPGAME-26NOV181300WROBUD-WRO](https://kalshi.com/markets/kxeurocupgame-26nov181300wrobud) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 13c | 83c | **84c** | **11** (`$9.24`) | 4c | 8706 | +19.05% | 62.69h |
+| 19 | [KXBRASILEIROTOTAL-26NOV18CRUPAL-5](https://kalshi.com/markets/kxbrasileirototal-26nov18crupal) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 14c | 83c | **84c** | **11** (`$9.24`) | 3c | 22559 | +19.05% | 69.19h |
+| 20 | [KXLIGAMXTOTAL-26NOV20PUEASL-5](https://kalshi.com/markets/kxligamxtotal-26nov20pueasl) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 16c | 81c | **82c** | **12** (`$9.84`) | 3c | 63727 | +21.95% | 118.69h |
+| 21 | [KXUEFANLSCORE-26NOV17HUNNIR-HUN1NIR0](https://kalshi.com/markets/kxuefanlscore-26nov17hunnir) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 15c | 82c | **83c** | **12** (`$9.96`) | 3c | 11134 | +20.48% | 40.44h |
+| 22 | [KXEFLL1GAME-26NOV21BRADR-DR](https://kalshi.com/markets/kxefll1game-26nov21bradr) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 16c | 80c | **82c** | **12** (`$9.84`) | 4c | 5801 | +21.95% | 131.69h |
+| 23 | [KXCOPPEREVENT-20NOV261100-T630000](https://kalshi.com/markets/kxcopperevent-20nov261100) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 13c | 83c | **84c** | **11** (`$9.24`) | 4c | 745 | +19.05% | 105.69h |
+| 24 | [KXLIGAMXSPREAD-26NOV20PUEASL-ASL2](https://kalshi.com/markets/kxligamxspread-26nov20pueasl) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 14c | 83c | **84c** | **11** (`$9.24`) | 3c | 20639 | +19.05% | 118.69h |
+| 25 | [KXBRASILEIROTOTAL-26NOV19VITRBB-5](https://kalshi.com/markets/kxbrasileirototal-26nov19vitrbb) | BUCKET_C_CORPORATE_PROCEDURAL_ENTERTAINMENT_SPACE | 13c | 83c | **84c** | **11** (`$9.24`) | 4c | 50564 | +19.05% | 92.19h |
